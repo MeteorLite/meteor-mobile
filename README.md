@@ -3,7 +3,7 @@ Android port of https://github.com/MeteorLite/meteor-client
   
 Current features:  
   
-Injector works
+Injector works  
 Full AWT software rendering (50 fps unless your resolution is absurd)  
 Logging in / world interacting  
 osrs.Reflection checks (required for jagex to not input block you)  
