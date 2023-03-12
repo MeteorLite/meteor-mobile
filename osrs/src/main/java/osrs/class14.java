@@ -1,9 +1,5 @@
 package osrs;
 
-import meteor.eventbus.Events;
-import meteor.eventbus.KEventBus;
-import meteor.eventbus.events.LoginIndexChanged;
-
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;

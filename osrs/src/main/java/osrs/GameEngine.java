@@ -1,9 +1,7 @@
 package osrs;
-
-import meteor.eventbus.Events;
+import eventbus.Events;
+import eventbus.events.ClientTick;
 import meteor.eventbus.KEventBus;
-import meteor.eventbus.events.ClientTick;
-import meteor.eventbus.events.Draw;
 
 import java.awt.Color;
 import java.awt.Graphics;

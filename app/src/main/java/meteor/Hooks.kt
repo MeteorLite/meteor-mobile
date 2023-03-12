@@ -1,9 +1,16 @@
 package meteor
 
-import meteor.eventbus.Events
+import eventbus.Events
+import eventbus.events.GameStateChanged
+import eventbus.events.GameTick
 import meteor.eventbus.KEventBus
-import meteor.eventbus.events.GameStateChanged
+import net.runelite.api.GameState
+import net.runelite.api.MainBufferProvider
+import net.runelite.api.Renderable
 import net.runelite.api.hooks.Callbacks
+import net.runelite.api.widgets.Widget
+import net.runelite.api.widgets.WidgetItem
+import java.awt.Graphics
 
 import java.awt.image.BufferedImage
 import java.awt.image.VolatileImage
@@ -15,7 +22,8 @@ class Hooks : Callbacks {
         .toNanos()*/
     //private val GAME_TICK = GameTick()
     private var shouldProcessGameTick = false
-/*    private var ignoreNextNpcUpdate = false
+    private var ignoreNextNpcUpdate = false
+/*
     private var lastMainBufferProvider: MainBufferProvider? = null
     private var lastGraphics: Graphics2D? = null
     private var drawManager = meteor.ui.DrawManager
@@ -30,12 +38,12 @@ class Hooks : Callbacks {
 
     init {
         KEventBus.INSTANCE.subscribe<GameStateChanged>(Events.GAME_STATE_CHANGED) { event ->
-/*            when (event.data.gameState) {
+            when (event.data.gameState) {
                 GameState.LOGGING_IN, GameState.HOPPING -> {
                     ignoreNextNpcUpdate = true
                 }
                 else -> {}
-            }*/
+            }
         }
     }
 
@@ -51,7 +59,7 @@ class Hooks : Callbacks {
     override fun tick() {
         if (shouldProcessGameTick) {
             shouldProcessGameTick = false
-            //KEventBus.INSTANCE.post(Events.GAME_TICK, GAME_TICK)
+            KEventBus.INSTANCE.post(Events.GAME_TICK, GameTick())
 /*            val tick: Int = client.tickCount
             client.tickCount = tick + 1*/
         }
@@ -74,14 +82,36 @@ class Hooks : Callbacks {
     }
 
     override fun updateNpcs() {
-        TODO("Not yet implemented")
-    }
+        if (ignoreNextNpcUpdate) {
+            ignoreNextNpcUpdate = false
+        } else {
+            shouldProcessGameTick = true
+        }
 
+        pendingEvents.forEach { post(it.type, it.event) }
+        pendingEvents.clear()
+    }
     override fun drawScene() {
         TODO("Not yet implemented")
     }
 
     override fun drawAboveOverheads() {
+        TODO("Not yet implemented")
+    }
+
+    override fun draw(mainBufferProvider: MainBufferProvider?, graphics: Graphics?, x: Int, y: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun draw(renderable: Renderable?, drawingUi: Boolean): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun drawInterface(interfaceId: Int, widgetItems: MutableList<WidgetItem>?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun drawLayer(layer: Widget?, widgetItems: MutableList<WidgetItem>?) {
         TODO("Not yet implemented")
     }
 

@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="meteor.MainActivity"
+            android:name="meteor.Main"
             android:theme="@style/AppTheme.NoActionBar"
             android:exported="true">
             <intent-filter>

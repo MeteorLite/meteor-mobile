@@ -32,8 +32,8 @@ import net.runelite.api.mixins.Mixin;
 import net.runelite.api.mixins.Shadow;
 import net.runelite.rs.api.RSGameEngine;
 
-import meteor.eventbus.Events;
-import meteor.eventbus.events.Draw;
+import eventbus.Events;
+import eventbus.events.Draw;
 
 @Mixin(RSGameEngine.class)
 public abstract class RSGameEngineMixin implements RSGameEngine {

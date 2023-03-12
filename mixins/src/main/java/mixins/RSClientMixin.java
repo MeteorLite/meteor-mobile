@@ -26,6 +26,7 @@
 package mixins;
 
 import net.runelite.api.Client;
+import net.runelite.api.GameState;
 import net.runelite.api.hooks.Callbacks;
 import net.runelite.api.mixins.Inject;
 import net.runelite.api.mixins.MethodHook;
@@ -33,10 +34,10 @@ import net.runelite.api.mixins.Mixin;
 import net.runelite.api.mixins.Shadow;
 import net.runelite.rs.api.RSClient;
 
-import meteor.eventbus.Events;
-import meteor.eventbus.events.GameStateChanged;
-import meteor.eventbus.events.LoginIndexChanged;
-import meteor.eventbus.events.LoginStateChanged;
+import eventbus.Events;
+import eventbus.events.GameStateChanged;
+import eventbus.events.LoginIndexChanged;
+import eventbus.events.LoginStateChanged;
 
 @Mixin(RSClient.class)
 public abstract class RSClientMixin implements RSClient {
@@ -60,9 +61,13 @@ public abstract class RSClientMixin implements RSClient {
     }
 
     @Inject
+    public static int lastGameState;
+
+    @Inject
     @MethodHook(value = "updateGameState", end = true)
     public static void onGameStateChanged(int newValue) {
-        client.getCallbacks().post(Events.GAME_STATE_CHANGED, new GameStateChanged(newValue));
+        client.getCallbacks().post(Events.GAME_STATE_CHANGED, new GameStateChanged(GameState.of(newValue), GameState.of(lastGameState)));
+        lastGameState = newValue;
     }
 
     @Inject
@@ -75,5 +80,11 @@ public abstract class RSClientMixin implements RSClient {
     @Override
     public void setCallbacks(Callbacks callbacks) {
         this.callbacks = callbacks;
+    }
+
+    @Inject
+    @MethodHook("doCycle")
+    protected final void doCycle$pre() {
+        client.getCallbacks().tick();
     }
 }

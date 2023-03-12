@@ -27,7 +27,7 @@ interface KEventSubscriber {
      * The subscription tag of this object.
      */
     val SUBSCRIBER_TAG: String get() = "${this::class.java.simpleName}@${this.hashCode()}"
-    val KEVENT_INSTANCE: KEventBus get() = KEVENT
+    val KEVENT_INSTANCE: KEventBus get() = KEventBus.INSTANCE
 }
 
 /**

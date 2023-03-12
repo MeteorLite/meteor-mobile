@@ -4,31 +4,26 @@ import java.lang.Exception
 import java.lang.StringBuilder
 import java.util.*
 
-class Logger(var name: String) {
+class Logger(var name: String = "") {
     var plugin: String? = null
     var format = "%-35s%s%n"
     fun info(message: Any, vararg replacers: Any) {
-        printColorMessageReplacers(ANSI_WHITE, message, *replacers)
+        printColorMessageReplacers(ANSIColors.WHITE.id, message, *replacers)
     }
 
     fun warn(message: Any, vararg replacers: Any) {
-        printColorMessageReplacers(ANSI_YELLOW, message, *replacers)
-    }
-
-    fun warn(message: String, e: Exception) {
-        printColorMessage(ANSI_RED, message)
-        e.printStackTrace()
+        printColorMessageReplacers(ANSIColors.YELLOW.id, message, *replacers)
     }
 
     fun debug(message: Any, vararg replacers: Any) {
         if (!isDebugEnabled) {
             return
         }
-        printColorMessageReplacers(ANSI_GREEN, message, *replacers)
+        printColorMessageReplacers(ANSIColors.GREEN.id, message, *replacers)
     }
 
     fun error(message: Any, vararg replacers: Any) {
-        printColorMessageReplacers(ANSI_RED, message, *replacers)
+        printColorMessageReplacers(ANSIColors.RED.id, message, *replacers)
     }
 
     private fun printColorMessage(ansiColor: String, message: Any) {
@@ -41,7 +36,7 @@ class Logger(var name: String) {
                 .add(DEFAULT_CONTROLLER_COLOR, "[$tempName] ")
                 .build()
         System.out.format(format, header, ansiColor + message)
-        print(ANSI_RESET)
+        print(ANSIColors.RESET.id)
     }
 
     private fun printColorMessageReplacers(ansiColor: String, message: Any, vararg replacers: Any) {
@@ -64,16 +59,7 @@ class Logger(var name: String) {
     }
 
     companion object {
-        const val ANSI_RESET = "\u001B[0m"
-        const val ANSI_BLACK = "\u001B[30m"
-        const val ANSI_RED = "\u001B[31m"
-        const val ANSI_GREEN = "\u001B[32m"
-        const val ANSI_YELLOW = "\u001B[33m"
-        const val ANSI_BLUE = "\u001B[34m"
-        const val ANSI_PURPLE = "\u001B[35m"
-        const val ANSI_CYAN = "\u001B[36m"
-        const val ANSI_WHITE = "\u001B[37m"
-        var DEFAULT_CONTROLLER_COLOR = ANSI_CYAN
+        var DEFAULT_CONTROLLER_COLOR = ANSIColors.CYAN.id
         var isDebugEnabled = true
         fun getLogger(loggedClass: Class<*>): Logger {
             val newLogger = Logger(loggedClass.name)
@@ -92,7 +78,7 @@ class Logger(var name: String) {
                     output.append(line.replace("\n", "")).append("\n")
                 }
             }
-            return ANSI_RED + output + ANSI_RESET
+            return ANSIColors.RED.id + output + ANSIColors.RESET.id
         }
     }
 }

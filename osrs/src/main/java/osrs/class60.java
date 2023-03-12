@@ -1,9 +1,5 @@
 package osrs;
 
-import meteor.eventbus.Events;
-import meteor.eventbus.KEventBus;
-import meteor.eventbus.events.LoginStateChanged;
-
 import java.util.concurrent.ThreadFactory;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
