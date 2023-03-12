@@ -529,7 +529,7 @@ public class Model extends Renderable {
 
    @ObfuscatedName("ao")
    @Export("calculateBoundingBox")
-   void calculateBoundingBox(int var1) {
+   public void calculateBoundingBox(int var1) {
       if (!this.aabb.containsKey(var1)) {
          int var2 = 0;
          int var3 = 0;

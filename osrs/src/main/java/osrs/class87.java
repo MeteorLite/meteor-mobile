@@ -104,7 +104,7 @@ public enum class87 implements class352 {
          class16.userHomeDirectory = "~/";
       }
 
-      class164.cacheParentPaths = new String[]{client.androidActivity.getFilesDir().getAbsolutePath()};
+      class164.cacheParentPaths = new String[]{new File(client.androidActivity.getFilesDir(), "cache/").getAbsolutePath()};
       StudioGame.cacheSubPaths = new String[]{".jagex_cache_" + class7.cacheGamebuild, ".file_store_" + class7.cacheGamebuild};
       int var18 = 0;
 

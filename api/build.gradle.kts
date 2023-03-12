@@ -13,7 +13,6 @@ android {
         minSdk = 26
         targetSdk = 33
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -32,8 +31,24 @@ android {
     }
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
+    kotlinOptions {
+        freeCompilerArgs = listOf("-Xjvm-default=all")
+    }
+}
+
+
 dependencies {
-    implementation("androidx.core:core-ktx:1.7.0")
+    implementation(project(":annotations"))
+    implementation(project(":awt"))
+    implementation(project(":logger"))
+    annotationProcessor(group = "org.projectlombok", name = "lombok", version = "1.18.26")
+    compileOnly(group = "org.projectlombok", name = "lombok", version = "1.18.26")
+    implementation(group = "com.google.guava", name = "guava", version = "31.1-android")
+    implementation(group = "org.apache.commons", name = "commons-text", version = "1.10.0")
+    implementation(group = "com.google.code.findbugs", name = "jsr305", version = "3.0.2")
+    implementation("org.jetbrains:annotations:24.0.1")
+    implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.8.0")
 }

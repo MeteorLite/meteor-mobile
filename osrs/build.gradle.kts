@@ -35,6 +35,8 @@ android {
 dependencies {
     implementation(project(":annotations"))
     compileOnly(project(":awt"))
+    implementation(project(":api"))
+    implementation(project(":api-rs"))
     implementation(project(":eventbus"))
     implementation("org.bouncycastle:bcprov-jdk15on:1.64")
 }

@@ -69,7 +69,7 @@ public class RSApiInjector extends AbstractInjector
 	{
 		for (final ClassFile deobClass : inject.getDeobfuscated())
 		{
-			final RSApiClass implementingClass = inject.getRsApi().findClass(API_BASE + deobClass.getName());
+			final RSApiClass implementingClass = inject.getRsApi().findClass(API_BASE + deobClass.getName().replace("osrs/", ""));
 
 			injectFields(deobClass, implementingClass);
 			injectMethods(deobClass, implementingClass);

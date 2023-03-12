@@ -1,6 +1,5 @@
 package meteor
 
-import meteor.MainActivity
 import osrs.GameEngine
 
 object Overlaymanager {

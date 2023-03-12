@@ -6,11 +6,11 @@ class Message internal constructor(var message: String) {
     }
 
     fun addDefault(text: String): Message {
-        return Message(message + Logger.ANSI_GREEN + text)
+        return Message(message + ANSIColors.GREEN.id + text)
     }
 
     fun build(): String {
-        return message + Logger.ANSI_RESET
+        return message + ANSIColors.RESET.id
     }
 
     companion object {

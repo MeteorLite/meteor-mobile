@@ -137,11 +137,11 @@ public class Injector extends InjectData implements InjectTaskHandler
 
 		//inject(new GraphicsObject(this));
 
-/*		inject(new CopyRuneLiteClasses(this));
+		inject(new CopyRuneLiteClasses(this));
 
 		inject(new RuneLiteIterables(this));
 
-		inject(new RuneliteObject(this));*/
+		inject(new RuneliteObject(this));
 
 		inject(new InterfaceInjector(this));
 
