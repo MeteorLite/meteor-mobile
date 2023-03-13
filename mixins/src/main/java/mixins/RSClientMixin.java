@@ -1366,12 +1366,14 @@ public abstract class RSClientMixin implements RSClient {
         //maybe couple with varbitChanged. resizeable may not be a varbit but it would fit with the other client settings.
         boolean isResized = client.isResized();
 
-        if (oldIsResized != isResized) {
-            ResizeableChanged resizeableChanged = new ResizeableChanged(isResized);
-            client.getCallbacks().post(Events.RESIZEABLE_CHANGED, resizeableChanged);
+        try {
+            if (oldIsResized != isResized) {
+                ResizeableChanged resizeableChanged = new ResizeableChanged(isResized);
+                client.getCallbacks().post(Events.RESIZEABLE_CHANGED, resizeableChanged);
 
-            oldIsResized = isResized;
-        }
+                oldIsResized = isResized;
+            }
+        } catch (Exception ignored) {}
     }
 
     @Inject

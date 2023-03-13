@@ -46,10 +46,10 @@ public abstract class ReflectionMixin implements RSReflection
 	private static RSClient client;
 
 	@Inject
-	public static boolean reportClasses = false;
+	public static boolean reportClasses = true;
 
 	@Inject
-	public static boolean reportFields = false;
+	public static boolean reportFields = true;
 
 	@Copy("reportFindClass")
 	@Replace("reportFindClass")

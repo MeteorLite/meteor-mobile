@@ -446,8 +446,9 @@ object ConfigManager {
         consumers.clear()
         val newProperties = Properties()
 
-        if (CONFIG_FILE.exists())
+
         try {
+            if (CONFIG_FILE.exists())
             FileInputStream(CONFIG_FILE).use { `in` ->
                 newProperties.load(InputStreamReader(`in`, StandardCharsets.UTF_8))
                 swapProperties(newProperties)

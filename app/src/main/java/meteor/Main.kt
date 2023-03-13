@@ -25,6 +25,10 @@ import eventbus.events.LoginStateChanged
 import meteor.config.ConfigManager
 import meteor.eventbus.KEventBus
 import meteor.plugins.PluginManager
+import meteor.plugins.meteor.MeteorConfig
+import meteor.ui.overlay.OverlayManager
+import meteor.ui.overlay.OverlayRenderer
+import meteor.ui.overlay.TooltipManager
 import osrs.*
 import java.awt.Point
 import java.awt.image.BufferedImage
@@ -36,6 +40,10 @@ class Main : AppCompatActivity() {
         var activity: AppCompatActivity? = null
         lateinit var client: net.runelite.api.Client
         val logger = Logger("Meteor")
+        lateinit var overlayManager: OverlayManager
+        lateinit var meteorConfig: MeteorConfig
+        lateinit var tooltipManager: TooltipManager
+        lateinit var overlayRenderer: OverlayRenderer
     }
 
     val eventBus = KEventBus.INSTANCE
@@ -54,11 +62,20 @@ class Main : AppCompatActivity() {
 
     var shouldRender = false
 
+    fun initConfigs() {
+        // load configs immediately
+        ConfigManager.loadSavedProperties()
+        ConfigManager.setDefaultConfiguration(MeteorConfig::class, false)
+        ConfigManager.saveProperties()
+
+        // init meteor config
+        meteorConfig = ConfigManager.getConfig(MeteorConfig::class.java)!!
+    }
+
     override fun onStart() {
         super.onStart()
         activity = this
-        ConfigManager.loadSavedProperties()
-        ConfigManager.saveProperties()
+        initConfigs()
         initDisplay()
         startOSRS()
         initManagers()
@@ -80,6 +97,7 @@ class Main : AppCompatActivity() {
     }
 
     fun initManagers() {
+        overlayManager = OverlayManager
         PluginManager
     }
 
@@ -102,7 +120,15 @@ class Main : AppCompatActivity() {
         deobClient!!.init()
         deobClient!!.start()
         client = deobClient as net.runelite.api.Client
+        overlayRenderer = OverlayRenderer()
         client.callbacks = Hooks()
+        var wait = true
+        Thread {
+
+            wait = false
+        }.start()
+        while (wait)
+            Thread.sleep(100)
     }
 
     fun subscribeEvents() {

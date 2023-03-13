@@ -61,7 +61,7 @@ public abstract class RSGameEngineMixin implements RSGameEngine
 	@Override
 	public boolean isClientThread()
 	{
-		return thread == Thread.currentThread();
+		return Thread.currentThread().getName().equals("Client");
 	}
 
 	@Inject

@@ -6,6 +6,7 @@ import kotlin.system.exitProcess
 import androidx.compose.runtime.mutableStateListOf
 import meteor.Main
 import meteor.config.ConfigManager
+import meteor.plugins.agility.AgilityPlugin
 import meteor.plugins.neverlog.NeverLogoutPlugin
 
 
@@ -17,6 +18,7 @@ object PluginManager {
     init {
         //init<Meteor>()
         if (pluginsEnabled) {
+            init<AgilityPlugin>()
             init<NeverLogoutPlugin>()
         }
         Main.logger.warn("Loaded ${plugins.size} plugins")
