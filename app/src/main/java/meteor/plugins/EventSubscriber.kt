@@ -342,7 +342,7 @@ open class EventSubscriber(open var daemon: Boolean = false) : KEventSubscriber 
         subscribeEvent<CheckClick>(Events.CHECK_CLICK) { executeIfListening { onCheckClick(it) } }
     }
 
-    internal inline fun <reified T : Any> subscribeEvent(type: Enum<*>, noinline unit: (T) -> Unit) {
+    private inline fun <reified T : Any> subscribeEvent(type: Enum<*>, noinline unit: (T) -> Unit) {
         KEventBus.INSTANCE.subscribe(type, threadMode = SubscriberThreadMode.POSTING) { event -> unit.invoke(event.data) }
     }
 

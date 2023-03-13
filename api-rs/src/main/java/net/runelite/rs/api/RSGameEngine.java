@@ -26,12 +26,14 @@ package net.runelite.rs.api;
 
 import net.runelite.api.GameEngine;
 import java.awt.Canvas;
+import java.awt.image.BufferedImage;
+
 import net.runelite.mapping.Import;
 
 public interface RSGameEngine extends GameEngine
 {
-	@Import("canvas")
-	Canvas getCanvas();
+	@Import("gameImage")
+	BufferedImage getGameImage();
 
 	@Import("post")
 	void post$api(Object canvas);

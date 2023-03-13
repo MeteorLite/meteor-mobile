@@ -28,7 +28,7 @@ public class InjectorValidator implements Validator
 
 	public InjectorValidator(Injector injector) {
 		inject = injector;
-		validate();
+		//validate();
 	}
 
 	public boolean validate()

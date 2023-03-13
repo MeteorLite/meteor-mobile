@@ -35,11 +35,17 @@ android {
 dependencies {
     compileOnly(project(":annotations"))
     compileOnly(project(":api-rs"))
+    compileOnly(project(":awt"))
     compileOnly(project(":eventbus"))
     compileOnly(project(":osrs"))
     compileOnly(project(":api"))
     compileOnly(project(":logger"))
     compileOnly(project(":cache"))
+
+    compileOnly(group = "com.google.guava", name = "guava", version = "31.1-android")
+    compileOnly(group = "javax.inject", name = "javax.inject", version = "1")
+    compileOnly(group = "commons-io", name = "commons-io", version = "2.11.0")
+
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

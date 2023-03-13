@@ -1,6 +1,7 @@
 package meteor
 
 import eventbus.Events
+import eventbus.events.BeforeMenuRender
 import eventbus.events.GameStateChanged
 import eventbus.events.GameTick
 import meteor.eventbus.KEventBus
@@ -8,6 +9,7 @@ import net.runelite.api.GameState
 import net.runelite.api.MainBufferProvider
 import net.runelite.api.Renderable
 import net.runelite.api.hooks.Callbacks
+import net.runelite.api.hooks.DrawCallbacks
 import net.runelite.api.widgets.Widget
 import net.runelite.api.widgets.WidgetItem
 import java.awt.Graphics
@@ -78,7 +80,7 @@ class Hooks : Callbacks {
     }
 
     override fun frame() {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     override fun updateNpcs() {
@@ -92,33 +94,34 @@ class Hooks : Callbacks {
         pendingEvents.clear()
     }
     override fun drawScene() {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     override fun drawAboveOverheads() {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     override fun draw(mainBufferProvider: MainBufferProvider?, graphics: Graphics?, x: Int, y: Int) {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     override fun draw(renderable: Renderable?, drawingUi: Boolean): Boolean {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
+        return false
     }
 
     override fun drawInterface(interfaceId: Int, widgetItems: MutableList<WidgetItem>?) {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     override fun drawLayer(layer: Widget?, widgetItems: MutableList<WidgetItem>?) {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     companion object {
-/*        @JvmStatic
+        @JvmStatic
         fun clearColorBuffer(x: Int, y: Int, width: Int, height: Int) {
-            val bp = client.bufferProvider
+            val bp = Main.client.bufferProvider
             val canvasWidth = bp.width
             val pixels = bp.pixels
 
@@ -138,7 +141,7 @@ class Hooks : Callbacks {
             renderable: Renderable, orientation: Int, pitchSin: Int, pitchCos: Int,
             yawSin: Int, yawCos: Int, x: Int, y: Int, z: Int, hash: Long
         ) {
-            val drawCallbacks: DrawCallbacks? = client.drawCallbacks
+            val drawCallbacks: DrawCallbacks? = Main.client.drawCallbacks
             if (drawCallbacks != null) {
                 drawCallbacks
                     .draw(renderable, orientation, pitchSin, pitchCos, yawSin, yawCos, x, y, z, hash)
@@ -150,8 +153,8 @@ class Hooks : Callbacks {
         @JvmStatic
         fun drawMenu(): Boolean {
             val event = BeforeMenuRender()
-            client.callbacks.post(Events.BEFORE_MENU_RENDER, event)
+            Main.client.callbacks.post(Events.BEFORE_MENU_RENDER, event)
             return event.consumed
-        }*/
+        }
     }
 }

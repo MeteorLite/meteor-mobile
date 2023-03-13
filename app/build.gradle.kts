@@ -61,6 +61,7 @@ dependencies {
     implementation(project(":awt"))
     implementation(project(":eventbus"))
     implementation(project(":logger"))
+    runtimeOnly(project(":scripts"))
     implementation(files("./libs/injected-client.jar"))
 
     implementation("org.bouncycastle:bcprov-jdk15on:1.64")
