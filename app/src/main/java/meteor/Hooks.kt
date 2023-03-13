@@ -7,6 +7,7 @@ import eventbus.events.GameStateChanged
 import eventbus.events.GameTick
 import meteor.eventbus.KEventBus
 import meteor.rs.ClientThread
+import meteor.task.Scheduler
 import meteor.ui.overlay.OverlayLayer
 import meteor.util.RSTimeUnit
 import net.runelite.api.GameState
@@ -19,8 +20,6 @@ import net.runelite.api.widgets.WidgetItem
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
-
-import java.awt.image.BufferedImage
 import java.awt.image.VolatileImage
 
 
@@ -81,6 +80,14 @@ class Hooks : Callbacks {
         }
 
         lastCheck = now
+
+        try {
+            // tick pending scheduled tasks
+            Main.scheduler.tick()
+            //chatMessageManager.process()
+        } catch (ex: java.lang.Exception) {
+            ex.printStackTrace()
+        }
     }
 
     override fun frame() {

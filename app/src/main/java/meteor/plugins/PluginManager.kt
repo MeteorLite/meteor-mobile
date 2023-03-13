@@ -1,13 +1,20 @@
 package meteor.plugins
-import java.io.File
-import java.net.URLClassLoader
-import java.util.jar.Manifest
-import kotlin.system.exitProcess
+
 import androidx.compose.runtime.mutableStateListOf
 import meteor.Main
 import meteor.config.ConfigManager
 import meteor.plugins.agility.AgilityPlugin
 import meteor.plugins.neverlog.NeverLogoutPlugin
+import meteor.plugins.reportbutton.ReportButtonPlugin
+import meteor.task.Schedule
+import meteor.task.ScheduledMethod
+import java.io.File
+import java.lang.invoke.CallSite
+import java.lang.invoke.MethodHandles
+import java.lang.invoke.MethodType
+import java.net.URLClassLoader
+import java.util.jar.Manifest
+import kotlin.system.exitProcess
 
 
 object PluginManager {
@@ -20,6 +27,7 @@ object PluginManager {
         if (pluginsEnabled) {
             init<AgilityPlugin>()
             init<NeverLogoutPlugin>()
+            init<ReportButtonPlugin>()
         }
         Main.logger.warn("Loaded ${plugins.size} plugins")
     }

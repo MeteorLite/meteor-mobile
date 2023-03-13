@@ -212,9 +212,9 @@ object ConfigManager {
             throw RuntimeException(
                     "Non-public configuration classes can't have default methods invoked")
         }
-        return Proxy.newProxyInstance(clazz.classLoader, arrayOf<Class<*>>(
+        return (Proxy.newProxyInstance(clazz.classLoader, arrayOf(
                 clazz
-        ), handler) as T
+        ), handler) as T) ?: throw RuntimeException("Configuration fucked")
     }
 
     fun getConfigurationKeys(prefix: String): List<String> {

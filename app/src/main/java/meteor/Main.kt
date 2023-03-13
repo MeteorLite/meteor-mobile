@@ -26,13 +26,16 @@ import meteor.config.ConfigManager
 import meteor.eventbus.KEventBus
 import meteor.plugins.PluginManager
 import meteor.plugins.meteor.MeteorConfig
+import meteor.task.Scheduler
 import meteor.ui.overlay.OverlayManager
 import meteor.ui.overlay.OverlayRenderer
 import meteor.ui.overlay.TooltipManager
+import meteor.util.ExecutorServiceExceptionLogger
 import osrs.*
 import java.awt.Point
 import java.awt.image.BufferedImage
 import java.io.*
+import java.util.concurrent.Executors
 import kotlin.math.abs
 
 class Main : AppCompatActivity() {
@@ -44,6 +47,12 @@ class Main : AppCompatActivity() {
         lateinit var meteorConfig: MeteorConfig
         lateinit var tooltipManager: TooltipManager
         lateinit var overlayRenderer: OverlayRenderer
+        val executor = ExecutorServiceExceptionLogger(Executors.newSingleThreadScheduledExecutor())
+        val scheduler = Scheduler()
+    }
+
+    init {
+        initConfigs()
     }
 
     val eventBus = KEventBus.INSTANCE
@@ -75,7 +84,6 @@ class Main : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         activity = this
-        initConfigs()
         initDisplay()
         startOSRS()
         initManagers()
