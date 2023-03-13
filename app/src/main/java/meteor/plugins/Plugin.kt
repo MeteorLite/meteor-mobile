@@ -1,18 +1,18 @@
 package meteor.plugins
 
-import androidx.compose.runtime.Composable
 import meteor.Main
 import meteor.config.ConfigManager
 import meteor.config.ConfigManager.getConfig
 import meteor.config.ConfigManager.setDefaultConfiguration
 import meteor.config.legacy.Config
+import meteor.ui.overlay.Overlay
 
 open class Plugin(override var daemon: Boolean = false) : EventSubscriber(daemon = daemon) {
     var configuration: Config? = null
 
     open var client = Main.client
-/*    open val overlayManager = Main.overlayManager
-    val overlays = ArrayList<Overlay>()*/
+    open val overlayManager = Main.overlayManager
+    val overlays = ArrayList<Overlay>()
     var running = false
 
     fun getDescriptor(): PluginDescriptor? {
@@ -37,26 +37,24 @@ open class Plugin(override var daemon: Boolean = false) : EventSubscriber(daemon
         return c as T
     }
 
-/*
     inline fun <reified T : Overlay> overlay(overlay: T): T {
         overlays.add(overlay)
         return overlay
     }
-*/
 
     fun start() {
         subscribe()
         eventListening = true
-/*        for (overlay in overlays)
-            overlayManager.add(overlay)*/
+        for (overlay in overlays)
+            overlayManager.add(overlay)
         running = true
     }
 
     fun stop() {
         unsubscribe()
         eventListening = false
-/*        for (overlay in overlays)
-            overlayManager.remove(overlay)*/
+        for (overlay in overlays)
+            overlayManager.remove(overlay)
         running = false
     }
 

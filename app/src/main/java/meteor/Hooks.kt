@@ -1,37 +1,44 @@
 package meteor
 
 import eventbus.Events
+import eventbus.events.BeforeMenuRender
+import eventbus.events.BeforeRender
 import eventbus.events.GameStateChanged
 import eventbus.events.GameTick
 import meteor.eventbus.KEventBus
+import meteor.rs.ClientThread
+import meteor.task.Scheduler
+import meteor.ui.overlay.OverlayLayer
+import meteor.util.RSTimeUnit
 import net.runelite.api.GameState
 import net.runelite.api.MainBufferProvider
 import net.runelite.api.Renderable
 import net.runelite.api.hooks.Callbacks
+import net.runelite.api.hooks.DrawCallbacks
 import net.runelite.api.widgets.Widget
 import net.runelite.api.widgets.WidgetItem
+import java.awt.Dimension
 import java.awt.Graphics
-
-import java.awt.image.BufferedImage
+import java.awt.Graphics2D
 import java.awt.image.VolatileImage
 
 
 class Hooks : Callbacks {
     private var lastCheck: Long = 0
-/*    private val CHECK: Long = RSTimeUnit.GAME_TICKS.duration
-        .toNanos()*/
-    //private val GAME_TICK = GameTick()
+    private val CHECK: Long = RSTimeUnit.GAME_TICKS.duration
+        .toNanos()
+    private val GAME_TICK = GameTick()
     private var shouldProcessGameTick = false
     private var ignoreNextNpcUpdate = false
-/*
     private var lastMainBufferProvider: MainBufferProvider? = null
     private var lastGraphics: Graphics2D? = null
-    private var drawManager = meteor.ui.DrawManager
+    //private var drawManager = meteor.ui.DrawManager
     private var lastStretchedDimensions: Dimension? = null
     private var stretchedImage: VolatileImage? = null
     private var stretchedGraphics: Graphics2D? = null
-    private var clientThread = ClientThread*/
-
+    private var clientThread = ClientThread
+    private var client = Main.client
+    private var overlayRenderer = Main.overlayRenderer
     class PendingEvent(val type: Enum<*>, val event: Any)
 
     private var pendingEvents = ArrayList<PendingEvent>()
@@ -60,11 +67,10 @@ class Hooks : Callbacks {
         if (shouldProcessGameTick) {
             shouldProcessGameTick = false
             KEventBus.INSTANCE.post(Events.GAME_TICK, GameTick())
-/*            val tick: Int = client.tickCount
-            client.tickCount = tick + 1*/
+            val tick: Int = client.tickCount
+            client.tickCount = tick + 1
         }
 
-/*
         clientThread.invoke()
 
         val now = System.nanoTime()
@@ -72,13 +78,20 @@ class Hooks : Callbacks {
         if (now - lastCheck < CHECK) {
             return
         }
-*/
 
-        //lastCheck = now
+        lastCheck = now
+
+        try {
+            // tick pending scheduled tasks
+            Main.scheduler.tick()
+            //chatMessageManager.process()
+        } catch (ex: java.lang.Exception) {
+            ex.printStackTrace()
+        }
     }
 
     override fun frame() {
-        TODO("Not yet implemented")
+        KEventBus.INSTANCE.post(Events.BEFORE_RENDER, BeforeRender)
     }
 
     override fun updateNpcs() {
@@ -91,34 +104,84 @@ class Hooks : Callbacks {
         pendingEvents.forEach { post(it.type, it.event) }
         pendingEvents.clear()
     }
+
+    private fun getGraphics(mainBufferProvider: MainBufferProvider): Graphics2D {
+        if (lastGraphics == null || lastMainBufferProvider !== mainBufferProvider) {
+            lastGraphics?.dispose()
+            lastMainBufferProvider = mainBufferProvider
+            lastGraphics = mainBufferProvider.image.graphics as Graphics2D
+        }
+        return lastGraphics as Graphics2D
+    }
+
     override fun drawScene() {
-        TODO("Not yet implemented")
+        val graphics2d: Graphics2D = getGraphics(client.bufferProvider as MainBufferProvider)
+        try {
+            overlayRenderer.renderOverlayLayer(graphics2d, OverlayLayer.ABOVE_SCENE)
+        } catch (ex: java.lang.Exception) {
+            ex.printStackTrace()
+        }
     }
 
     override fun drawAboveOverheads() {
-        TODO("Not yet implemented")
+        val bufferProvider = client.bufferProvider as MainBufferProvider
+        val graphics2d: Graphics2D = getGraphics(bufferProvider)
+
+        try {
+            overlayRenderer.renderOverlayLayer(graphics2d, OverlayLayer.UNDER_WIDGETS)
+        } catch (ex: java.lang.Exception) {
+            ex.printStackTrace()
+        }
     }
 
     override fun draw(mainBufferProvider: MainBufferProvider?, graphics: Graphics?, x: Int, y: Int) {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
+
+    fun interface RenderableDrawListener {
+        fun draw(renderable: Renderable?, ui: Boolean): Boolean
+    }
+
+    private val renderableDrawListeners: List<RenderableDrawListener> = java.util.ArrayList()
 
     override fun draw(renderable: Renderable?, drawingUi: Boolean): Boolean {
-        TODO("Not yet implemented")
+        try {
+            for (renderableDrawListener in renderableDrawListeners) {
+                if (!renderableDrawListener.draw(renderable, drawingUi)) {
+                    return false
+                }
+            }
+        } catch (ex: java.lang.Exception) {
+            Main.logger.error("exception from renderable draw listener", ex)
+        }
+        return true
     }
 
-    override fun drawInterface(interfaceId: Int, widgetItems: MutableList<WidgetItem>?) {
-        TODO("Not yet implemented")
+    override fun drawInterface(interfaceId: Int, widgetItems: MutableList<WidgetItem>) {
+        val graphics2d: Graphics2D = getGraphics(client.bufferProvider as MainBufferProvider)
+
+        try {
+            overlayRenderer.renderAfterInterface(graphics2d, interfaceId, widgetItems)
+        } catch (ex: java.lang.Exception) {
+            ex.printStackTrace()
+        }
     }
 
-    override fun drawLayer(layer: Widget?, widgetItems: MutableList<WidgetItem>?) {
-        TODO("Not yet implemented")
+    override fun drawLayer(layer: Widget, widgetItems: MutableList<WidgetItem>) {
+        val bufferProvider = client.bufferProvider as MainBufferProvider
+        val graphics2d: Graphics2D = getGraphics(bufferProvider)
+
+        try {
+            overlayRenderer.renderAfterLayer(graphics2d, layer, widgetItems)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
     }
 
     companion object {
-/*        @JvmStatic
+        @JvmStatic
         fun clearColorBuffer(x: Int, y: Int, width: Int, height: Int) {
-            val bp = client.bufferProvider
+            val bp = Main.client.bufferProvider
             val canvasWidth = bp.width
             val pixels = bp.pixels
 
@@ -138,7 +201,7 @@ class Hooks : Callbacks {
             renderable: Renderable, orientation: Int, pitchSin: Int, pitchCos: Int,
             yawSin: Int, yawCos: Int, x: Int, y: Int, z: Int, hash: Long
         ) {
-            val drawCallbacks: DrawCallbacks? = client.drawCallbacks
+            val drawCallbacks: DrawCallbacks? = Main.client.drawCallbacks
             if (drawCallbacks != null) {
                 drawCallbacks
                     .draw(renderable, orientation, pitchSin, pitchCos, yawSin, yawCos, x, y, z, hash)
@@ -150,8 +213,8 @@ class Hooks : Callbacks {
         @JvmStatic
         fun drawMenu(): Boolean {
             val event = BeforeMenuRender()
-            client.callbacks.post(Events.BEFORE_MENU_RENDER, event)
+            Main.client.callbacks.post(Events.BEFORE_MENU_RENDER, event)
             return event.consumed
-        }*/
+        }
     }
 }

@@ -24,6 +24,7 @@
  */
 package net.runelite.rs.api;
 
+import java.awt.image.BufferedImage;
 import java.math.BigInteger;
 import java.util.Map;
 
@@ -38,6 +39,9 @@ import net.runelite.mapping.Import;
 
 public interface RSClient extends RSGameEngine, Client
 {
+	@Import("gameImage")
+	BufferedImage getGameImage();
+
 	@Import("cameraX")
 	@Override
 	int getCameraX();
@@ -1438,7 +1442,7 @@ public interface RSClient extends RSGameEngine, Client
 	void posToCameraAngle(int var0, int var1);
 
 	@Import("objectSounds")
-	Deque<AmbientSoundEffect> getAmbientSoundEffects();
+	RSNodeDeque getAmbientSoundEffects();
 
 	@Import("EnumDefinition_cached")
 	RSEvictingDualNodeHashTable getEnumDefinitionCache();

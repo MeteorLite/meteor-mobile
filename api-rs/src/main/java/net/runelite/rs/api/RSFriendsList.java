@@ -8,5 +8,5 @@ import net.runelite.mapping.Import;
 public interface RSFriendsList extends FriendContainer
 {
 	@Import("friendLoginUpdates")
-	Deque<PendingLogin> getPendingLogins();
+	RSLinkDeque getPendingLogins();
 }

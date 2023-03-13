@@ -135,7 +135,7 @@ public class Injector extends InjectData implements InjectTaskHandler
 		//Used during rev to create class uses in osrs/net/runelite/rs/
 		inject(new CreateObfuscatedClassMap(this));
 
-		//inject(new GraphicsObject(this));
+		inject(new GraphicsObject(this));
 
 		inject(new CopyRuneLiteClasses(this));
 
@@ -145,7 +145,7 @@ public class Injector extends InjectData implements InjectTaskHandler
 
 		inject(new InterfaceInjector(this));
 
-		//inject(new RasterizerAlpha(this));
+		inject(new RasterizerAlpha(this));
 
 		inject(new MixinInjector(this));
 
@@ -159,22 +159,22 @@ public class Injector extends InjectData implements InjectTaskHandler
 
 		//inject(new DrawAfterWidgets(this));
 
-		//inject(new ScriptVM(this));
+		inject(new ScriptVM(this));
 
 		// All GPU raw injectors should probably be combined, especially RenderDraw and Occluder
-		//inject(new ClearColorBuffer(this));
+		inject(new ClearColorBuffer(this));
 
-		//inject(new RenderDraw(this));
+		inject(new RenderDraw(this));
 
 		inject(new Occluder(this));
 
-		//inject(new DrawMenu(this));
+		inject(new DrawMenu(this));
 
 		inject(new GameDrawingMode(this));
 
-		//inject(new AddPlayerToMenu(this));
+		inject(new AddPlayerToMenu(this));
 
-		//inject(new RuneliteMenuEntry(this));
+		inject(new RuneliteMenuEntry(this));
 
 		validate(new InjectorValidator(this));
 

@@ -31,6 +31,8 @@ package net.runelite.rs.api;
 import net.runelite.api.MainBufferProvider;
 import java.awt.Component;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
+
 import net.runelite.mapping.Import;
 
 public interface RSRasterProvider extends RSAbstractRasterProvider, MainBufferProvider
@@ -41,7 +43,4 @@ public interface RSRasterProvider extends RSAbstractRasterProvider, MainBufferPr
 
 	@Import("image")
 	void setImage(Image image);
-
-	@Import("component")
-	Component getCanvas();
 }

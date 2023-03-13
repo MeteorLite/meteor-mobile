@@ -30,13 +30,13 @@ import lombok.Data;
 @Data
 public class ScriptDefinition
 {
-	private int id;
-	private int[] instructions;
-	private int[] intOperands;
-	private String[] stringOperands;
-	private int intStackCount;
-	private int stringStackCount;
-	private int localIntCount;
-	private int localStringCount;
-	private Map<Integer, Integer>[] switches;
+	public int id;
+	public int[] instructions;
+	public int[] intOperands;
+	public String[] stringOperands;
+	public int intStackCount;
+	public int stringStackCount;
+	public int localIntCount;
+	public int localStringCount;
+	public Map<Integer, Integer>[] switches;
 }

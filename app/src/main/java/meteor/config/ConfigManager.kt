@@ -212,9 +212,9 @@ object ConfigManager {
             throw RuntimeException(
                     "Non-public configuration classes can't have default methods invoked")
         }
-        return Proxy.newProxyInstance(clazz.classLoader, arrayOf<Class<*>>(
+        return (Proxy.newProxyInstance(clazz.classLoader, arrayOf(
                 clazz
-        ), handler) as T
+        ), handler) as T) ?: throw RuntimeException("Configuration fucked")
     }
 
     fun getConfigurationKeys(prefix: String): List<String> {
@@ -446,8 +446,9 @@ object ConfigManager {
         consumers.clear()
         val newProperties = Properties()
 
-        if (CONFIG_FILE.exists())
+
         try {
+            if (CONFIG_FILE.exists())
             FileInputStream(CONFIG_FILE).use { `in` ->
                 newProperties.load(InputStreamReader(`in`, StandardCharsets.UTF_8))
                 swapProperties(newProperties)

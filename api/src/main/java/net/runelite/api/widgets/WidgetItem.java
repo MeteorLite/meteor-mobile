@@ -44,31 +44,31 @@ public class WidgetItem
 	 *
 	 * @see net.runelite.api.ItemID
 	 */
-	private final int id;
+	public final int id;
 	/**
 	 * The quantity of the represented item.
 	 */
-	private final int quantity;
+	public final int quantity;
 	/**
 	 * The index position of this WidgetItem inside its parents
 	 * WidgetItem array.
 	 *
 	 * @see Widget#getWidgetItems()
 	 */
-	private final int index;
+	public final int index;
 	/**
 	 * The area where the widget is drawn on the canvas.
 	 */
-	private final Rectangle canvasBounds;
+	public final Rectangle canvasBounds;
 	/**
 	 * The widget which contains this item.
 	 */
-	private final Widget widget;
+	public final Widget widget;
 	/**
 	 * The canvas bounds for the widget, if it is being dragged.
 	 */
 	@Nullable
-	private final Rectangle draggingCanvasBounds;
+	public final Rectangle draggingCanvasBounds;
 
 	/**
 	 * Get the area where the widget item is drawn on the canvas, accounting for drag

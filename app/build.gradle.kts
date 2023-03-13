@@ -61,10 +61,11 @@ dependencies {
     implementation(project(":awt"))
     implementation(project(":eventbus"))
     implementation(project(":logger"))
+    runtimeOnly(project(":scripts"))
     implementation(files("./libs/injected-client.jar"))
 
     implementation("org.bouncycastle:bcprov-jdk15on:1.64")
-
+    implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.12.0")
     implementation("androidx.activity:activity-compose:1.6.1")
     implementation(group = "com.google.guava", name = "guava", version = "31.1-android")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -72,6 +73,8 @@ dependencies {
     implementation("com.google.android.material:material:1.8.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.jaredrummler:android-device-names:2.1.1")
+    annotationProcessor(group = "org.projectlombok", name = "lombok", version = "1.18.26")
+    compileOnly(group = "org.projectlombok", name = "lombok", version = "1.18.26")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
