@@ -1739,4 +1739,7 @@ public interface RSClient extends RSGameEngine, Client
 	@Import("worldHost")
 	@Override
 	void setHost(String worldHost);
+
+	@Import("Login_loadingText")
+	String getLoadingText();
 }

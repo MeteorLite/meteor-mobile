@@ -3,23 +3,39 @@ package meteor
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
-import android.graphics.Color
+import android.graphics.Color.BLACK
+import android.graphics.Insets
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnHoverListener
 import android.view.View.OnTouchListener
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import com.jaredrummler.android.device.DeviceName
 import eventbus.Events
 import eventbus.events.ClientTick
 import eventbus.events.Draw
 import eventbus.events.GameStateChanged
+import eventbus.events.LoadingTextChanged
 import eventbus.events.LoginIndexChanged
 import eventbus.events.LoginStateChanged
 import meteor.config.ConfigManager
@@ -37,6 +53,7 @@ import java.awt.image.BufferedImage
 import java.io.*
 import java.util.concurrent.Executors
 import kotlin.math.abs
+
 
 class Main : AppCompatActivity() {
     companion object {
@@ -59,9 +76,11 @@ class Main : AppCompatActivity() {
     var deobClient: Client? = null
 
     //Game View
-    var gameView: View? = null
+    var gameView: ImageView? = null
     var gameViewBitmap: Bitmap? = null
     var hasSetupGameView = false
+
+    var overlayView: ComposeView? = null
 
     //Mouse tracking
     var downStartPosition : Point? = null
@@ -70,6 +89,8 @@ class Main : AppCompatActivity() {
     var mouseDown : Long = -1
 
     var shouldRender = false
+
+    var splashFinished = mutableStateOf(false)
 
     fun initConfigs() {
         // load configs immediately
@@ -94,14 +115,65 @@ class Main : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         DeviceName.init(this)
         setContentView(R.layout.activity_main)
-        window.decorView.setBackgroundColor(Color.BLACK)
+        window.decorView.setBackgroundColor(android.graphics.Color.BLACK)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         updateHideUi()
+    }
+
+    private val overlayVisible = mutableStateOf(false)
+
+    val primary: Color = Color.Cyan
+    val secondary: Color = Color.Cyan
+    val background: Color = Color(0xFF242424)
+    val surface: Color = Color.Black
+    val error: Color = Color.Red
+    val onPrimary: Color = Color.White
+    val onSecondary: Color = Color.White
+    val onBackground: Color = Color.White
+    val onSurface: Color = Color.White
+    val onError: Color = Color.Black
+
+
+    @Composable
+    fun brandBadge() {
+        Box(modifier = Modifier
+                .width(150.dp)
+                .background(background)) {
+            Image( painter = painterResource(id = R.drawable.meteor), contentDescription = "Brand Badge")
+        }
+    }
+
+    @Composable
+    fun splashContent() {
+        BoxWithConstraints(modifier = Modifier
+                .fillMaxSize()
+                .background(background), contentAlignment = Alignment.Center) {
+            brandBadge()
+        }
+    }
+
+    @Composable
+    fun overlayContent() {
+        if (!splashFinished.value) {
+            splashContent()
+            return
+        }
+        if (overlayVisible.value)
+            Box(modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.DarkGray.copy(alpha = .6f)))
+    }
+
+    //Prevent back from closing
+    override fun onBackPressed() {
+        overlayVisible.value = !overlayVisible.value
     }
 
     public override fun onResume() {
         super.onResume()
         updateHideUi()
+        overlayView = findViewById(R.id.overlayView)
+        overlayView!!.setContent { overlayContent() }
     }
 
     fun initManagers() {
@@ -110,11 +182,11 @@ class Main : AppCompatActivity() {
     }
 
     fun initDisplay() {
-        val displayMetrics = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(displayMetrics)
-        GameEngine.width = displayMetrics.widthPixels
-        GameEngine.height = displayMetrics.heightPixels
-        calculateNotchOffset()
+        val windowMetrics = activity!!.windowManager.currentWindowMetrics
+        val insets: Insets = windowMetrics.windowInsets
+                .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+        GameEngine.width = windowMetrics.bounds.width()// - insets.left - insets.right
+        GameEngine.height = windowMetrics.bounds.height()// - insets.top - insets.bottom
         gameViewBitmap =
                 Bitmap.createBitmap(IntArray(GameEngine.width * GameEngine.height), GameEngine.width, GameEngine.height, Bitmap.Config.RGB_565)
                         .copy(Bitmap.Config.RGB_565, true)
@@ -132,7 +204,6 @@ class Main : AppCompatActivity() {
         client.callbacks = Hooks()
         var wait = true
         Thread {
-
             wait = false
         }.start()
         while (wait)
@@ -168,9 +239,16 @@ class Main : AppCompatActivity() {
         eventBus.subscribe<Draw>(Events.DRAW) {
             updateGameImage()
         }
+        eventBus.subscribe<LoadingTextChanged>(Events.LOADING_TEXT_CHANGED) {
+            if (it.data.newText.contains("checking for updates", ignoreCase = true)) {
+                splashFinished.value = true
+            }
+
+            println("Loading text changed: ${it.data.newText}")
+        }
     }
 
-    fun calculateNotchOffset() {
+/*    fun calculateNotchOffset() {
         val deviceName = DeviceName.getDeviceName()
         println("Device: $deviceName")
 
@@ -179,7 +257,7 @@ class Main : AppCompatActivity() {
         if (deviceName == "b0q") {
             GameEngine.width += 125
         }
-    }
+    }*/
 
     @SuppressLint("NewApi")
     private fun updateHideUi() {
@@ -256,17 +334,19 @@ class Main : AppCompatActivity() {
         }
     }
 
+    var renders = 0;
+
     fun render() {
         runOnUiThread {
             if (!hasSetupGameView) {
                 println("First Render")
                 gameView = findViewById(R.id.imageView)
-                (gameView as ImageView?)!!.setBackgroundColor(Color.BLACK)
+                gameView!!.setBackgroundColor(BLACK)
                 gameView!!.setOnHoverListener(hoverListener())
                 gameView!!.setOnTouchListener(touchListener())
                 hasSetupGameView = true
             }
-            (gameView as ImageView?)!!.setImageBitmap(gameViewBitmap)
+            gameView!!.setImageBitmap(gameViewBitmap)
         }
     }
 

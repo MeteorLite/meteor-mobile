@@ -3249,4 +3249,10 @@ public abstract class RSClientMixin implements RSClient {
     public static void onLoginIndexChanged(int newValue) {
         client.getCallbacks().post(Events.LOGIN_INDEX_CHANGED, new LoginIndexChanged(newValue));
     }
+
+    @Inject
+    @FieldHook("Login_loadingText")
+    public static void onLoadingTextChanged(int idx) {
+        client.getCallbacks().post(Events.LOADING_TEXT_CHANGED, new LoadingTextChanged(client.getLoadingText()));
+    }
 }

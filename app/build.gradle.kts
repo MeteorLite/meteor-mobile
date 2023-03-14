@@ -6,6 +6,7 @@ plugins {
 }
 
 var projectVersion = "0.3.2"
+val compose_version = "1.4.3"
 
 android {
     namespace = "meteor"
@@ -13,7 +14,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = compose_version
     }
     compileSdk = 33
     defaultConfig {
@@ -63,6 +64,7 @@ dependencies {
     implementation(project(":logger"))
     runtimeOnly(project(":scripts"))
     implementation(files("./libs/injected-client.jar"))
+    implementation("androidx.compose.material3:material3:1.1.0-alpha08")
 
     implementation("org.bouncycastle:bcprov-jdk15on:1.64")
     implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.12.0")
