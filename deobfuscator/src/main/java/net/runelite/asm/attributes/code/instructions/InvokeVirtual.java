@@ -63,10 +63,6 @@ public class InvokeVirtual extends Instruction implements InvokeInstruction
 	{
 
 		super(instructions, InstructionType.INVOKEVIRTUAL);
-		if (method.getClazz().getName().endsWith("PlayerType"))
-			if (method.getName().equals("clone")) {
-				throw new RuntimeException("gotcha");
-			}
 		this.method = method;
 	}
 
