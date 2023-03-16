@@ -30,6 +30,7 @@ import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
+import java.lang.reflect.Proxy
 
 internal class ConfigInvocationHandler(private val manager: ConfigManager) : InvocationHandler {
     private val cache = CacheBuilder.newBuilder()
@@ -63,7 +64,7 @@ internal class ConfigInvocationHandler(private val manager: ConfigManager) : Inv
             val value = ConfigManager.getConfiguration(group.value, item.keyName)
             if (value == null) {
                 if (method.isDefault) {
-                    val defaultValue = callDefaultMethod(proxy, method, null)
+                    val defaultValue = callDefaultMethod(proxy, method)
                     cache.put(method, defaultValue)
                     return defaultValue
                 }
@@ -80,7 +81,7 @@ internal class ConfigInvocationHandler(private val manager: ConfigManager) : Inv
             } catch (e: Exception) {
                 //log.warn("Unable to unmarshal {}.{} ", group.value(), item.keyName(), e);
                 if (method.isDefault) {
-                    callDefaultMethod(proxy, method, null)
+                    callDefaultMethod(proxy, method)
                 } else null
             }
         } else {
@@ -96,7 +97,7 @@ internal class ConfigInvocationHandler(private val manager: ConfigManager) : Inv
                 return null
             }
             if (method.isDefault) {
-                val defaultValue = callDefaultMethod(proxy, method, args)
+                val defaultValue = callDefaultMethod(proxy, method)
                 if (newValue == defaultValue) {
                     // Just unset if it goes back to the default
                     ConfigManager.unsetConfiguration(group.value, item.keyName)
@@ -121,11 +122,15 @@ internal class ConfigInvocationHandler(private val manager: ConfigManager) : Inv
     companion object {
         // Special object to represent null values in the cache
         private val NULL = Any()
-        fun callDefaultMethod(proxy: Any, method: Method, args: Array<Any?>?): Any {
-            val lookup = MethodHandles.lookup()
+        fun callDefaultMethod(proxy: Any, method: Method): Any {
+            val newLookup = MethodHandles.Lookup::class.java.getDeclaredConstructor(Class::class.java, Int::class.java).apply {
+                isAccessible = true
+            }
+            val lookup = newLookup.newInstance(method.declaringClass, 0xf)   // ALL_MODES
             val handle: MethodHandle = lookup.unreflectSpecial(method, method.declaringClass)
             return handle
-                .invoke(proxy)
+                    .bindTo(proxy)
+                .invoke()
         }
     }
 }

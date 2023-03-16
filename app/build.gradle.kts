@@ -47,6 +47,15 @@ android {
     }
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
+    kotlinOptions {
+        freeCompilerArgs = listOf(
+                "-Xjvm-default=all")
+    }
+}
+
+
+
 kotlin {
     android()
 }
@@ -75,6 +84,9 @@ dependencies {
     implementation("com.google.android.material:material:1.8.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.jaredrummler:android-device-names:2.1.1")
+    implementation("br.com.devsrsouza.compose.icons.android:octicons:1.0.0")
+    implementation("br.com.devsrsouza.compose.icons.android:tabler-icons:1.0.0")
+    implementation("br.com.devsrsouza.compose.icons.android:line-awesome:1.0.0")
     annotationProcessor(group = "org.projectlombok", name = "lombok", version = "1.18.26")
     compileOnly(group = "org.projectlombok", name = "lombok", version = "1.18.26")
     testImplementation("junit:junit:4.13.2")

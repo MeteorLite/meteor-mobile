@@ -297,7 +297,7 @@ object ConfigManager {
                 }
 
                 val defaultValue: Any = try {
-                    ConfigInvocationHandler.callDefaultMethod(config, method, null)
+                    ConfigInvocationHandler.callDefaultMethod(config, method)
                 } catch (ex: Throwable) {
                     ex.printStackTrace()
                     continue
@@ -321,7 +321,7 @@ object ConfigManager {
             }
             if (method.returnType.isAssignableFrom(Consumer::class.java)) {
                 val defaultValue: Any = try {
-                    ConfigInvocationHandler.callDefaultMethod(config, method, null)
+                    ConfigInvocationHandler.callDefaultMethod(config, method)
                 } catch (ex: Throwable) {
                     ex.printStackTrace()
                     continue
@@ -349,7 +349,7 @@ object ConfigManager {
                     }
                 }
                 val defaultValue: Any = try {
-                    ConfigInvocationHandler.callDefaultMethod(config, method, null)
+                    ConfigInvocationHandler.callDefaultMethod(config, method)
                 } catch (ex: Throwable) {
                     ex.printStackTrace()
                     continue

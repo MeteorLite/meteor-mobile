@@ -161,7 +161,9 @@ class Main : AppCompatActivity() {
         if (overlayVisible.value)
             Box(modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.DarkGray.copy(alpha = .6f)))
+                    .background(Color.DarkGray.copy(alpha = .6f))) {
+                pluginsPanel()
+            }
     }
 
     //Prevent back from closing
