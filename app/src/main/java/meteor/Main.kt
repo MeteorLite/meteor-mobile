@@ -74,7 +74,7 @@ class Main : AppCompatActivity() {
     fun initConfigs() {
         // load configs immediately
         ConfigManager.loadSavedProperties()
-        ConfigManager.setDefaultConfiguration(MeteorConfig::class, false)
+        ConfigManager.setDefaultConfiguration(MeteorConfig::class.java, false)
         ConfigManager.saveProperties()
 
         // init meteor config

@@ -38,7 +38,7 @@ object PluginManager {
             throw RuntimeException("Duplicate plugin ${plugin::class.simpleName} not allowed")
 
         plugin.configuration?.let {
-            ConfigManager.setDefaultConfiguration(it, false)
+            ConfigManager.setDefaultConfiguration(it::class.java, false)
         }
 
         if (ConfigManager.getConfiguration(

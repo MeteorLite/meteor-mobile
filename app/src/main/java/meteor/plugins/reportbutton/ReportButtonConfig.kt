@@ -24,27 +24,29 @@
  */
 package meteor.plugins.reportbutton
 
-import meteor.config.legacy.Config
+import meteor.config.Config
 import meteor.config.legacy.ConfigGroup
 import meteor.config.legacy.ConfigItem
 
-@ConfigGroup("reportButton")
-interface ReportButtonConfig : Config {
-    @ConfigItem(
-        keyName = "time",
-        name = "Display Options",
-        description = "Configures what text the report button shows."
-    )
-    fun time(): TimeStyle {
-        return TimeStyle.LOGIN_TIME
-    }
+class ReportButtonConfig : Config("reportButton") {
 
-    @ConfigItem(
-        keyName = "switchTimeFormat",
-        name = "Time Format",
-        description = "Configures time between 12 or 24 hour time format"
+    val time = meteor.config.ConfigItem(
+            keyName = "time",
+            name = "Display Options",
+            description = "Configures what text the report button shows.",
+            defaultValue = TimeStyle.LOGIN_TIME
     )
-    fun switchTimeFormat(): TimeFormat {
-        return TimeFormat.TIME_12H
+
+    val switchTimeFormat = meteor.config.ConfigItem(
+            keyName = "switchTimeFormat",
+            name = "Time Format",
+            description = "Configures time between 12 or 24 hour time format",
+            defaultValue = TimeFormat.TIME_12H
+    )
+
+    init {
+        configItems.addAll(listOf(
+                time,
+                switchTimeFormat))
     }
 }
