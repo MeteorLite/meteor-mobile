@@ -91,11 +91,11 @@ internal class ConfigInvocationHandler(private val manager: ConfigManager) : Inv
             }
             val newValue = args[0]
             val type = method.parameterTypes[0]
-            val oldValue = ConfigManager.getConfiguration(group.value, item.keyName, type)
+ /*           val oldValue = ConfigManager.getConfiguration(group.value, item.keyName, type)
             if (oldValue == newValue) {
                 // nothing to do
                 return null
-            }
+            }*/
             if (method.isDefault) {
                 val defaultValue = callDefaultMethod(proxy, method)
                 if (newValue == defaultValue) {

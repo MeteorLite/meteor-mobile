@@ -224,14 +224,40 @@ object ConfigManager {
         return properties.getProperty(getWholeKey(groupName, key))
     }
 
-    fun <T> getConfiguration(groupName: String, key: String, clazz: Class<T>): T? {
+    inline fun <reified T> getConfiguration(groupName: String, key: String, clazz: Class<T>): T? {
         val value = getConfiguration(groupName, key)
         if (!Strings.isNullOrEmpty(value)) {
             try {
+                when (T::class) {
+                    Boolean::class -> return stringToObject(value!!, clazz).toString().toBoolean() as T
+                    Int::class -> return stringToObject(value!!, clazz).toString().toInt() as T
+                    Color::class.java -> return colorFromString(stringToObject(value!!, clazz).toString()) as T
+                    Double::class -> return stringToObject(value!!, clazz).toString().toDouble() as T
+                    Dimension::class.java -> return {
+                        val splitStr = stringToObject(value!!, clazz).toString().split("x").toTypedArray()
+                        val width = splitStr[0].toInt()
+                        val height = splitStr[1].toInt()
+                        Dimension(width, height)
+                    } as T
+                    Point::class.java -> return {
+                        val splitStr = stringToObject(value!!, clazz).toString().split(":").toTypedArray()
+                        val width = splitStr[0].toInt()
+                        val height = splitStr[1].toInt()
+                        Point(width, height)
+                    } as T
+                    Rectangle::class.java -> return {
+                        val splitStr = stringToObject(value!!, clazz).toString().split(":").toTypedArray()
+                        val x = splitStr[0].toInt()
+                        val y = splitStr[1].toInt()
+                        val width = splitStr[2].toInt()
+                        val height = splitStr[3].toInt()
+                        Rectangle(x, y, width, height)
+                    } as T
+                }
                 return stringToObject(value!!, clazz) as T
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
-                //log.warn("Unable to unmarshal {} ", getWholeKey(groupName, profile, key), e);
+                Main.logger.warn("Unable to unmarshal {} ", getWholeKey(groupName, key), e);
             }
         }
         return null

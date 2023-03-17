@@ -1,6 +1,7 @@
 package meteor.config
 
-class ConfigItem(    val position: Int = Int.MAX_VALUE,
+class ConfigItem(    val group: String,
+                     val position: Int = Int.MAX_VALUE,
                      val keyName: String,
                      val name: String,
                      val description: String,
@@ -24,11 +25,11 @@ class ConfigItem(    val position: Int = Int.MAX_VALUE,
                      val textField: Boolean = false,
                      val composePanel: Boolean = false,) {
 
-    fun get() : Any? {
-        return null
+    inline fun <reified T> get() : T? {
+        return ConfigManager.getConfiguration(group, keyName, T::class.java)
     }
 
-    fun set(value: Any?) {
-
+    fun set(value: Any) {
+        ConfigManager.setConfiguration(group, keyName, value)
     }
 }

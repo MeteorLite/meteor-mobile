@@ -24,6 +24,7 @@
  */
 package meteor.plugins.reportbutton
 
+import meteor.Configuration
 import meteor.config.Config
 import meteor.config.legacy.ConfigGroup
 import meteor.config.legacy.ConfigItem
@@ -31,6 +32,7 @@ import meteor.config.legacy.ConfigItem
 class ReportButtonConfig : Config("reportButton") {
 
     val time = meteor.config.ConfigItem(
+            group = group,
             keyName = "time",
             name = "Display Options",
             description = "Configures what text the report button shows.",
@@ -38,6 +40,7 @@ class ReportButtonConfig : Config("reportButton") {
     )
 
     val switchTimeFormat = meteor.config.ConfigItem(
+            group = group,
             keyName = "switchTimeFormat",
             name = "Time Format",
             description = "Configures time between 12 or 24 hour time format",

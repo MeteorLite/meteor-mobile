@@ -3,7 +3,6 @@ package meteor.ui.preferences
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import meteor.Main
-import meteor.config.descriptor.ConfigDescriptor
 import meteor.plugins.Plugin
 
 
@@ -27,13 +26,12 @@ val totalMinimalWidth = Applet().minimalWidth + Main.meteorConfig.toolbarWidth()
 var pluginPanel = mutableStateOf<PluginPanel?>(null)*/
 var searchValue = mutableStateOf("")
 //var lastButtonClicked : ToolbarButton? = null
-lateinit var descriptor: ConfigDescriptor
 lateinit var lastPlugin: Plugin
-//val pluginListSize = mutableStateOf(Main.meteorConfig.pluginListTextSize())
-val pluginSpacer = mutableStateOf(Main.meteorConfig.pluginSpaceBetween())
-val darkLightMode = mutableStateOf(Main.meteorConfig.theme())
-val uiColor = mutableStateOf(Color(Main.meteorConfig.uiColor().rgb))
-val secondColor = mutableStateOf(Color(Main.meteorConfig.secondColor().rgb))
+val pluginListSize = mutableStateOf(Main.meteorConfig.pluginListTextSize.get<Int>()!!)
+val pluginSpacer = mutableStateOf(Main.meteorConfig.pluginListSpacer.get<Int>()!!)
+val darkLightMode = mutableStateOf(Main.meteorConfig.isLightTheme.get<Boolean>()!!)
+val uiColor = mutableStateOf(Color((Main.meteorConfig.uiColor.get<java.awt.Color>()!!).rgb))
+val secondColor = mutableStateOf(Color((Main.meteorConfig.uiAccentColor.get<java.awt.Color>()!!).rgb))
 val surface: Color
     get() = if (darkLightMode.value) Color(0xFF212121)
     else Color(0xFFf3f5f7)

@@ -303,6 +303,8 @@ class Main : AppCompatActivity() {
             val touchX = event.x.toInt()
             val touchY = event.y.toInt()
             val point = Point(touchX, touchY)
+            if (overlayVisible.value)
+                return@OnTouchListener true
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     downStartPosition = point

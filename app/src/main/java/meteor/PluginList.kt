@@ -34,11 +34,12 @@ import compose.icons.Octicons
 import compose.icons.octicons.Search16
 import meteor.config.ConfigManager
 import meteor.plugins.Plugin
+import meteor.plugins.PluginDescriptor
 import meteor.plugins.PluginManager
 import meteor.ui.preferences.background
 import meteor.ui.preferences.configOpen
-import meteor.ui.preferences.descriptor
 import meteor.ui.preferences.lastPlugin
+import meteor.ui.preferences.pluginListSize
 import meteor.ui.preferences.pluginSpacer
 import meteor.ui.preferences.pluginsOpen
 import meteor.ui.preferences.surface
@@ -169,6 +170,16 @@ fun plugins() {
                                 )
                             }
                         }
+                        Text(
+                                plugin.javaClass.getDeclaredAnnotation(PluginDescriptor::class.java).name,
+                                style = TextStyle(
+                                        color = uiColor.value,
+                                        letterSpacing = 2.sp,
+                                        fontSize = pluginListSize.value.sp,
+                                        fontWeight = FontWeight.Medium
+                                ),
+                                modifier = Modifier.fillMaxWidth()
+                        )
                     }
 
                     Row(
@@ -197,7 +208,6 @@ fun plugins() {
                             IconButton(
                                 onClick = {
                                     lastPlugin = plugin
-                                    descriptor = ConfigManager.getConfigDescriptor(plugin.configuration!!)
                                     configOpen.value = true
                                     pluginsOpen.value = false
                                           },

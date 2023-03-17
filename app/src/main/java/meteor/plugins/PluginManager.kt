@@ -51,7 +51,8 @@ object PluginManager {
         runningMap[plugin] = plugin.shouldEnable()
         plugins.add(plugin)
 
-        start(plugin)
+        if (runningMap[plugin]!!)
+            start(plugin)
     }
 
     private fun initExternalPlugin(jar: File, manifest: Manifest) {

@@ -28,6 +28,7 @@ package meteor.ui.overlay.infobox
 import com.google.common.base.Strings
 import eventbus.events.MenuOptionClicked
 import meteor.Main
+import meteor.plugins.reportbutton.TimeFormat
 /*import meteor.events.Events
 import meteor.events.InfoBoxMenuClicked*/
 import meteor.ui.components.ComponentConstants.STANDARD_BACKGROUND_COLOR
@@ -80,8 +81,8 @@ class InfoBoxOverlay internal constructor(
         // to the last infobox prior to wrapping too.
         panelComponent.setPreferredSize(
             Dimension(
-                DEFAULT_WRAP_COUNT * (config.infoBoxSize.get() as Int + GAP),
-                DEFAULT_WRAP_COUNT * (config.infoBoxSize.get() as Int + GAP)
+                DEFAULT_WRAP_COUNT * (config.infoBoxSize.get<Int>()!! + GAP),
+                DEFAULT_WRAP_COUNT * (config.infoBoxSize.get<Int>()!! + GAP)
             )
         )
         panelComponent.orientation = (orientation)
@@ -96,11 +97,11 @@ class InfoBoxOverlay internal constructor(
             if (color != null) {
                 infoBoxComponent.color = (color)
             }
-            infoBoxComponent.outline = (config.infoBoxTextOutline.get() as Boolean)
+            infoBoxComponent.outline = (config.infoBoxTextOutline.get<Boolean>()!!)
             infoBoxComponent.image = (box.scaledImage)
             infoBoxComponent.tooltip = (box.tooltip)
-            infoBoxComponent.setPreferredSize(Dimension(config.infoBoxSize.get() as Int, config.infoBoxSize.get() as Int))
-            infoBoxComponent.backgroundColor = (config.overlayBackgroundColor.get() as Color)
+            infoBoxComponent.setPreferredSize(Dimension(config.infoBoxSize.get<Int>()!!, config.infoBoxSize.get<Int>()!!))
+            infoBoxComponent.backgroundColor = (config.overlayBackgroundColor.get<Color>()!!)
             infoBoxComponent.infoBox = (box)
             panelComponent.children.add(infoBoxComponent)
         }
