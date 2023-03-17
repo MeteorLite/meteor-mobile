@@ -212,9 +212,7 @@ object ConfigManager {
             throw RuntimeException(
                     "Non-public configuration classes can't have default methods invoked")
         }
-        return (Proxy.newProxyInstance(clazz.classLoader, arrayOf(
-                clazz
-        ), handler) as T) ?: throw RuntimeException("Configuration fucked")
+        return clazz.newInstance() as T ?: throw RuntimeException("Configuration fucked")
     }
 
     fun getConfigurationKeys(prefix: String): List<String> {
@@ -284,7 +282,7 @@ object ConfigManager {
         return methods
     }
 
-    fun getDefaultConfigValue(config: Any, methodName: String) : String?{
+/*    fun getDefaultConfigValue(config: Any, methodName: String) : String?{
         var value: String? = null
         val clazz = config.javaClass.interfaces[0]
         for (method in getAllDeclaredInterfaceMethods(clazz)) {
@@ -297,7 +295,7 @@ object ConfigManager {
                 }
 
                 val defaultValue: Any = try {
-                    ConfigInvocationHandler.callDefaultMethod(config, method)
+                    ConfigInvocationHandler.callDefaultMethod(config, method, null)
                 } catch (ex: Throwable) {
                     ex.printStackTrace()
                     continue
@@ -306,66 +304,37 @@ object ConfigManager {
             }
         }
         return value
-    }
+    }*/
 
-    fun setDefaultConfiguration(config: Any, override: Boolean) {
-        val clazz = config.javaClass.interfaces[0]
-        val group: ConfigGroup = clazz.getAnnotation(ConfigGroup::class.java)
-                ?: return
-        for (method in getAllDeclaredInterfaceMethods(clazz)) {
-            val item: ConfigItem? = method.getAnnotation(ConfigItem::class.java)
-
-            // only apply default configuration for methods which read configuration (0 args)
-            if (item == null || method.parameterCount != 0) {
-                continue
+    fun setDefaultConfiguration(config: Class<out Config>, override: Boolean) {
+        val clazz = config.newInstance()
+        for (field in clazz.javaClass.declaredFields) {
+            field.isAccessible = true
+            if (field.type.name == ConfigItem::class.java.name) {
+                val configItem = field.get(clazz) as ConfigItem
+                clazz.configItems.add(configItem)
             }
-            if (method.returnType.isAssignableFrom(Consumer::class.java)) {
-                val defaultValue: Any = try {
-                    ConfigInvocationHandler.callDefaultMethod(config, method)
-                } catch (ex: Throwable) {
-                    ex.printStackTrace()
-                    continue
+        }
+        for (configItem in clazz.configItems) {
+            if (!override) {
+                // This checks if it is set and is also unmarshallable to the correct type; so
+                // we will overwrite invalid config values with the default
+                val current = getConfiguration(clazz.group, configItem.keyName, configItem.defaultValue.javaClass)
+                if (current != null) {
+                    continue  // something else is already set
                 }
-
-                //log.debug("Registered consumer: {}.{}", group.value(), item.keyName());
-                consumers[group.value + "." + item.keyName] = defaultValue as Consumer<in Plugin?>
-            } else {
-                if (!method.isDefault) {
-                    if (override) {
-                        val current = getConfiguration(group.value, item.keyName)
-                        // only unset if already set
-                        if (current != null) {
-                            unsetConfiguration(group.value, item.keyName)
-                        }
-                    }
-                    continue
-                }
-                if (!override) {
-                    // This checks if it is set and is also unmarshallable to the correct type; so
-                    // we will overwrite invalid config values with the default
-                    val current = getConfiguration(group.value, item.keyName, method.returnType)
-                    if (current != null) {
-                        continue  // something else is already set
-                    }
-                }
-                val defaultValue: Any = try {
-                    ConfigInvocationHandler.callDefaultMethod(config, method)
-                } catch (ex: Throwable) {
-                    ex.printStackTrace()
-                    continue
-                }
-                val current = getConfiguration(group.value, item.keyName)
-                val valueString = objectToString(defaultValue)
-                // null and the empty string are treated identically in sendConfig and treated as an unset
-                // If a config value defaults to "" and the current value is null, it will cause an extra
-                // unset to be sent, so treat them as equal
-                if (current == valueString || current.isNullOrEmpty() && valueString.isNullOrEmpty()) {
-                    continue  // already set to the default value
-                }
-
-                //log.debug("Setting default configuration value for {}.{} to {}", group.value(), item.keyName(), defaultValue);
-                setConfiguration(group.value, item.keyName, valueString!!)
             }
+            val current = getConfiguration(clazz.group, configItem.keyName)
+            val valueString = objectToString(configItem.defaultValue)
+            // null and the empty string are treated identically in sendConfig and treated as an unset
+            // If a config value defaults to "" and the current value is null, it will cause an extra
+            // unset to be sent, so treat them as equal
+            if (current == valueString || current.isNullOrEmpty() && valueString.isNullOrEmpty()) {
+                continue  // already set to the default value
+            }
+
+            //log.debug("Setting default configuration value for {}.{} to {}", clazz.group(), item.keyName(), defaultValue);
+            setConfiguration(clazz.group, configItem.keyName, valueString!!)
         }
     }
 
@@ -391,54 +360,6 @@ object ConfigManager {
         KEventBus.INSTANCE.post(Events.CONFIG_CHANGED, configChanged)
 
         saveProperties()
-    }
-
-    fun getConfigDescriptor(configurationProxy: Config): ConfigDescriptor {
-        val inter: Class<*> = configurationProxy.javaClass.interfaces[0] ?: configurationProxy::class.java.interfaces[0]
-        val group: ConfigGroup = inter.getAnnotation(ConfigGroup::class.java)
-            ?: throw IllegalArgumentException("Not a config group")
-        val sections: List<ConfigSectionDescriptor> =  getAllDeclaredInterfaceFields(inter)
-            .asSequence()
-            .filter { it.isAnnotationPresent(ConfigSection::class.java) && it.type == String::class.java }
-            .map { ConfigSectionDescriptor(
-                it[inter].toString(),
-                it.getDeclaredAnnotation(ConfigSection::class.java)
-            ) }
-            .sortedBy {  it.position()
-            }.toMutableList() + inter.methods
-            .filter { it.parameterCount == 0 && it.isAnnotationPresent(ConfigSection::class.java) }
-            .map {
-                ConfigSectionDescriptor(
-                    it.returnType.declaredFields.toString(),
-                    it.getDeclaredAnnotation(ConfigSection::class.java)
-                )
-            }
-            .sortedBy { it.position()
-            }.toMutableList()
-
-        val titles: List<ConfigTitleDescriptor> = getAllDeclaredInterfaceFields(inter)
-            .asSequence()
-            .filter {  it.isAnnotationPresent(ConfigTitle::class.java) && it.type == String::class.java }
-            .map { ConfigTitleDescriptor(it[inter].toString(), it.getDeclaredAnnotation(ConfigTitle::class.java)) }
-            .filter { obj: ConfigTitleDescriptor? -> Objects.nonNull(obj) }
-            .sortedBy{ it.position()
-            }.toList()
-        val items: List<ConfigItemDescriptor> = inter.methods
-            .filter { it.parameterCount == 0 && it.isAnnotationPresent(ConfigItem::class.java) }
-            .map {
-                ConfigItemDescriptor(
-                    it.getDeclaredAnnotation(ConfigItem::class.java),
-                    it.returnType,
-                    it.getDeclaredAnnotation(Range::class.java),
-                    it.getDeclaredAnnotation(Alpha::class.java),
-                    it.getDeclaredAnnotation(Units::class.java),
-                    it.getDeclaredAnnotation(Icon::class.java),
-                    it.getDeclaredAnnotation(Secret::class.java)
-                )
-            }
-            .sortedBy { it.position()
-            }.toList()
-        return ConfigDescriptor(group, sections, titles, items)
     }
 
     @Synchronized
