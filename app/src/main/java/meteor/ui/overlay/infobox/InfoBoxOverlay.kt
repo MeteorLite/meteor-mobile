@@ -28,12 +28,14 @@ package meteor.ui.overlay.infobox
 import com.google.common.base.Strings
 import eventbus.events.MenuOptionClicked
 import meteor.Main
+import meteor.plugins.reportbutton.TimeFormat
 /*import meteor.events.Events
 import meteor.events.InfoBoxMenuClicked*/
 import meteor.ui.components.ComponentConstants.STANDARD_BACKGROUND_COLOR
 import meteor.ui.overlay.*
 import meteor.ui.overlay.components.InfoBoxComponent
 import net.runelite.api.MenuAction
+import java.awt.Color
 import java.awt.Dimension
 import java.awt.Graphics2D
 import java.awt.Point
@@ -79,8 +81,8 @@ class InfoBoxOverlay internal constructor(
         // to the last infobox prior to wrapping too.
         panelComponent.setPreferredSize(
             Dimension(
-                DEFAULT_WRAP_COUNT * (config.infoBoxSize() + GAP),
-                DEFAULT_WRAP_COUNT * (config.infoBoxSize() + GAP)
+                DEFAULT_WRAP_COUNT * (config.infoBoxSize.get<Int>()!! + GAP),
+                DEFAULT_WRAP_COUNT * (config.infoBoxSize.get<Int>()!! + GAP)
             )
         )
         panelComponent.orientation = (orientation)
@@ -95,11 +97,11 @@ class InfoBoxOverlay internal constructor(
             if (color != null) {
                 infoBoxComponent.color = (color)
             }
-            infoBoxComponent.outline = (config.infoBoxTextOutline())
+            infoBoxComponent.outline = (config.infoBoxTextOutline.get<Boolean>()!!)
             infoBoxComponent.image = (box.scaledImage)
             infoBoxComponent.tooltip = (box.tooltip)
-            infoBoxComponent.setPreferredSize(Dimension(config.infoBoxSize(), config.infoBoxSize()))
-            infoBoxComponent.backgroundColor = (config.overlayBackgroundColor())
+            infoBoxComponent.setPreferredSize(Dimension(config.infoBoxSize.get<Int>()!!, config.infoBoxSize.get<Int>()!!))
+            infoBoxComponent.backgroundColor = (config.overlayBackgroundColor.get<Color>()!!)
             infoBoxComponent.infoBox = (box)
             panelComponent.children.add(infoBoxComponent)
         }

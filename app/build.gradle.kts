@@ -6,6 +6,7 @@ plugins {
 }
 
 var projectVersion = "0.3.2"
+val compose_version = "1.4.3"
 
 android {
     namespace = "meteor"
@@ -13,7 +14,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = compose_version
     }
     compileSdk = 33
     defaultConfig {
@@ -46,6 +47,15 @@ android {
     }
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
+    kotlinOptions {
+        freeCompilerArgs = listOf(
+                "-Xjvm-default=all")
+    }
+}
+
+
+
 kotlin {
     android()
 }
@@ -63,6 +73,7 @@ dependencies {
     implementation(project(":logger"))
     runtimeOnly(project(":scripts"))
     implementation(files("./libs/injected-client.jar"))
+    implementation("androidx.compose.material3:material3:1.1.0-alpha08")
 
     implementation("org.bouncycastle:bcprov-jdk15on:1.64")
     implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.12.0")
@@ -73,6 +84,9 @@ dependencies {
     implementation("com.google.android.material:material:1.8.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.jaredrummler:android-device-names:2.1.1")
+    implementation("br.com.devsrsouza.compose.icons.android:octicons:1.0.0")
+    implementation("br.com.devsrsouza.compose.icons.android:tabler-icons:1.0.0")
+    implementation("br.com.devsrsouza.compose.icons.android:line-awesome:1.0.0")
     annotationProcessor(group = "org.projectlombok", name = "lombok", version = "1.18.26")
     compileOnly(group = "org.projectlombok", name = "lombok", version = "1.18.26")
     testImplementation("junit:junit:4.13.2")
