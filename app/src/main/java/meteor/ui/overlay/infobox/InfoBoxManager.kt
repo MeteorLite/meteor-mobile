@@ -32,6 +32,7 @@ import meteor.Configuration
 import meteor.Main
 import meteor.config.ConfigManager
 import meteor.plugins.EventSubscriber
+import meteor.plugins.reportbutton.TimeFormat
 import meteor.ui.overlay.ComponentOrientation
 import meteor.ui.overlay.OverlayManager
 import meteor.ui.overlay.OverlayMenuEntry
@@ -47,7 +48,7 @@ import java.util.stream.Collectors
 
 object InfoBoxManager : EventSubscriber() {
     private val layers: MutableMap<String, InfoBoxOverlay> = ConcurrentHashMap()
-    private val config = Main.meteorConfig!!
+    private val config = Main.meteorConfig
 
     override fun onConfigChanged(it: ConfigChanged) {
         if (it.group == Configuration.MASTER_GROUP && it.key == "infoBoxSize") {
@@ -126,7 +127,7 @@ object InfoBoxManager : EventSubscriber() {
         val height = image.getHeight(null).toDouble()
         val size = Math.max(
             2, config
-                .infoBoxSize()
+                .infoBoxSize.get<Int>()!!
         ).toDouble() // Limit size to 2 as that is minimum size not causing breakage
         if (size < width || size < height) {
             val scalex = size / width
@@ -155,7 +156,7 @@ object InfoBoxManager : EventSubscriber() {
             if (name == DEFAULT_LAYER) {
                 // Fall back to old orientation config option
                 orientation =
-                    if (config.infoBoxVertical()) ComponentOrientation.VERTICAL else ComponentOrientation.HORIZONTAL
+                    if (config.infoBoxVertical.get<Boolean>()!!) ComponentOrientation.VERTICAL else ComponentOrientation.HORIZONTAL
                 setOrientation(name, orientation)
             } else {
                 // Default infobox orientation

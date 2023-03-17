@@ -38,7 +38,7 @@ object PluginManager {
             throw RuntimeException("Duplicate plugin ${plugin::class.simpleName} not allowed")
 
         plugin.configuration?.let {
-            ConfigManager.setDefaultConfiguration(it, false)
+            ConfigManager.setDefaultConfiguration(it::class.java, false)
         }
 
         if (ConfigManager.getConfiguration(
@@ -51,7 +51,8 @@ object PluginManager {
         runningMap[plugin] = plugin.shouldEnable()
         plugins.add(plugin)
 
-        start(plugin)
+        if (runningMap[plugin]!!)
+            start(plugin)
     }
 
     private fun initExternalPlugin(jar: File, manifest: Manifest) {

@@ -4,7 +4,7 @@ import meteor.Main
 import meteor.config.ConfigManager
 import meteor.config.ConfigManager.getConfig
 import meteor.config.ConfigManager.setDefaultConfiguration
-import meteor.config.legacy.Config
+import meteor.config.Config
 import meteor.ui.overlay.Overlay
 
 open class Plugin(override var daemon: Boolean = false) : EventSubscriber(daemon = daemon) {
@@ -25,14 +25,14 @@ open class Plugin(override var daemon: Boolean = false) : EventSubscriber(daemon
 
     fun <T : Config?> configuration(clazz: Class<out Config?>): T {
         val c: T = getConfig(clazz)!! as T
-        setDefaultConfiguration(c as Config, false)
+        setDefaultConfiguration(c!!::class.java, false)
         configuration = c
         return c
     }
 
     inline fun <reified T : Config?> configuration(): T {
         val c: Config = getConfig(T::class.java)!!
-        setDefaultConfiguration(c, false)
+        setDefaultConfiguration(c::class.java, false)
         configuration = c
         return c as T
     }
