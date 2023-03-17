@@ -308,6 +308,13 @@ object ConfigManager {
 
     fun setDefaultConfiguration(config: Class<out Config>, override: Boolean) {
         val clazz = config.newInstance()
+        for (field in clazz.javaClass.declaredFields) {
+            field.isAccessible = true
+            if (field.type.name == ConfigItem::class.java.name) {
+                val configItem = field.get(clazz) as ConfigItem
+                clazz.configItems.add(configItem)
+            }
+        }
         for (configItem in clazz.configItems) {
             if (!override) {
                 // This checks if it is set and is also unmarshallable to the correct type; so

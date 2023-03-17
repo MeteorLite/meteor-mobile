@@ -43,10 +43,4 @@ class ReportButtonConfig : Config("reportButton") {
             description = "Configures time between 12 or 24 hour time format",
             defaultValue = TimeFormat.TIME_12H
     )
-
-    init {
-        configItems.addAll(listOf(
-                time,
-                switchTimeFormat))
-    }
 }

@@ -34,11 +34,4 @@ open class MeteorConfig() : Config(Configuration.MASTER_GROUP) {
             description = "Configures the background color of infoboxes and overlays",
             defaultValue = ComponentConstants.STANDARD_BACKGROUND_COLOR
     )
-
-    init {
-        configItems.add(infoBoxVertical)
-        configItems.add(infoBoxSize)
-        configItems.add(infoBoxTextOutline)
-        configItems.add(overlayBackgroundColor)
-    }
 }
