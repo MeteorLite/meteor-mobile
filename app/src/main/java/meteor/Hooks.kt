@@ -7,7 +7,6 @@ import eventbus.events.GameStateChanged
 import eventbus.events.GameTick
 import meteor.eventbus.KEventBus
 import meteor.rs.ClientThread
-import meteor.task.Scheduler
 import meteor.ui.overlay.OverlayLayer
 import meteor.util.RSTimeUnit
 import net.runelite.api.GameState
@@ -20,7 +19,8 @@ import net.runelite.api.widgets.WidgetItem
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
-import java.awt.image.VolatileImage
+import java.awt.Image
+import java.awt.image.BufferedImage
 
 
 class Hooks : Callbacks {
@@ -34,7 +34,7 @@ class Hooks : Callbacks {
     private var lastGraphics: Graphics2D? = null
     //private var drawManager = meteor.ui.DrawManager
     private var lastStretchedDimensions: Dimension? = null
-    private var stretchedImage: VolatileImage? = null
+    private var stretchedImage: BufferedImage? = null
     private var stretchedGraphics: Graphics2D? = null
     private var clientThread = ClientThread
     private var client = Main.client
@@ -134,8 +134,40 @@ class Hooks : Callbacks {
         }
     }
 
-    override fun draw(mainBufferProvider: MainBufferProvider?, graphics: Graphics?, x: Int, y: Int) {
-        //TODO("Not yet implemented")
+    lateinit var finalImage: Image
+
+    override fun draw(gameImage: BufferedImage?, graphics: Graphics?, x: Int, y: Int) {
+        if (graphics == null) {
+            return
+        }
+
+        val graphics2d: Graphics2D = gameImage!!.graphics as Graphics2D
+
+        try {
+            overlayRenderer.renderOverlayLayer(graphics2d, OverlayLayer.ALWAYS_ON_TOP)
+        } catch (ex: java.lang.Exception) {
+            ex.printStackTrace()
+        }
+
+        if (client.isGpu) {
+            // processDrawComplete gets called on GPU by the gpu plugin at the end of its
+            // drawing cycle, which is later on.
+            return
+        }
+
+        finalImage = gameImage // copy(gameImage)
+
+        Main.INSTANCE!!.updateGameImage()
+    }
+
+    private fun copy(src: Image): Image {
+        val width = src.getWidth(null)
+        val height = src.getHeight(null)
+        val image = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+        val graphics = image.graphics
+        graphics.drawImage(src, 0, 0, width, height, null)
+        graphics.dispose()
+        return image
     }
 
     fun interface RenderableDrawListener {

@@ -4,7 +4,6 @@ package meteor.plugins.meteor
 import meteor.Configuration
 import meteor.config.Config
 import meteor.config.ConfigItem
-import meteor.config.legacy.Range
 import meteor.ui.components.ComponentConstants
 import java.awt.Color
 

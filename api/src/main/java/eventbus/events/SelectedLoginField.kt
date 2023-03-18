@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Cameron <https://github.com/noremac201>
+ * Copyright (c) 2018 Abex
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,28 +22,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package meteor.plugins.reportbutton
+package eventbus.events
 
-import meteor.Configuration
-import meteor.config.Config
-import meteor.config.legacy.ConfigGroup
-import meteor.config.legacy.ConfigItem
+import meteor.Event
 
-class ReportButtonConfig : Config("reportButton") {
-
-    val time: Any = meteor.config.ConfigItem(
-            group = group,
-            keyName = "time",
-            name = "Display Options",
-            description = "Configures what text the report button shows.",
-            defaultValue = TimeStyle.LOGIN_TIME
-    )
-
-    val switchTimeFormat: Any = meteor.config.ConfigItem(
-            group = group,
-            keyName = "switchTimeFormat",
-            name = "Time Format",
-            description = "Configures time between 12 or 24 hour time format",
-            defaultValue = TimeFormat.TIME_12H
-    )
-}
+object SelectedLoginField: Event()

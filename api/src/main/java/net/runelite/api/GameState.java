@@ -72,11 +72,11 @@ public enum GameState
 	/**
 	 * The raw state value.
 	 */
-	private final int state;
+	public final int id;
 
 	GameState(int state)
 	{
-		this.state = state;
+		this.id = state;
 	}
 
 	/**
@@ -90,7 +90,7 @@ public enum GameState
 	{
 		for (GameState gs : GameState.values())
 		{
-			if (gs.state == state)
+			if (gs.id == state)
 			{
 				return gs;
 			}

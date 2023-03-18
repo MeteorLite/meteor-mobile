@@ -194,7 +194,7 @@ public abstract class StretchedModeMixin implements RSClient
 				and we still want the game's canvas to resize
 				with regards to the new maximum bounds.
 			 */
-			setResizeCanvasNextFrame(true);
+			//setResizeCanvasNextFrame(true);
 		}
 	}
 }

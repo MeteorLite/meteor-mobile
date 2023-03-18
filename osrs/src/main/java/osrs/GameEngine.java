@@ -546,6 +546,7 @@ public abstract class GameEngine implements Runnable {
    )
    @Export("graphicsTick")
    void graphicsTick() {
+      System.out.println("gtick");
 /*      Container var1 = this.container();*/
       long var2 = WorldMapSection2.clockNow();
       long var4 = graphicsTickTimes[class212.field1850];
@@ -873,17 +874,18 @@ public abstract class GameEngine implements Runnable {
          this.setUp();
          clock = class421.method2197();
 
-         while(0L == stopTimeMs || WorldMapSection2.clockNow() < stopTimeMs) {
+         while(true) {
             gameCyclesToDo = clock.wait(cycleDurationMillis, fiveOrOne);
-
             for(int var5 = 0; var5 < gameCyclesToDo; ++var5) {
-               this.clientTick();
-               KEventBus.Companion.getINSTANCE().post(Events.CLIENT_TICK, ClientTick.INSTANCE);
+               try {
+                  this.clientTick();
+               } catch (Exception e) {
+                  e.printStackTrace();
+               }
             }
 
             try {
                this.graphicsTick();
-
                this.post(this.canvas);
             } catch (Exception e) {
                e.printStackTrace();

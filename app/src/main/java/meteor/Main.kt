@@ -32,12 +32,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.jaredrummler.android.device.DeviceName
 import eventbus.Events
-import eventbus.events.ClientTick
 import eventbus.events.Draw
 import eventbus.events.GameStateChanged
 import eventbus.events.LoadingTextChanged
 import eventbus.events.LoginIndexChanged
 import eventbus.events.LoginStateChanged
+import eventbus.events.SelectedLoginField
 import meteor.config.ConfigManager
 import meteor.eventbus.KEventBus
 import meteor.plugins.PluginManager
@@ -47,6 +47,7 @@ import meteor.ui.overlay.OverlayManager
 import meteor.ui.overlay.OverlayRenderer
 import meteor.ui.overlay.TooltipManager
 import meteor.util.ExecutorServiceExceptionLogger
+import net.runelite.api.GameState
 import osrs.*
 import java.awt.Point
 import java.awt.image.BufferedImage
@@ -66,6 +67,7 @@ class Main : AppCompatActivity() {
         lateinit var overlayRenderer: OverlayRenderer
         val executor = ExecutorServiceExceptionLogger(Executors.newSingleThreadScheduledExecutor())
         val scheduler = Scheduler()
+        var INSTANCE : Main? = null
     }
 
     init {
@@ -103,12 +105,9 @@ class Main : AppCompatActivity() {
     }
 
     override fun onStart() {
+        INSTANCE = this
         super.onStart()
         activity = this
-        initDisplay()
-        startOSRS()
-        initManagers()
-        subscribeEvents()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -171,11 +170,20 @@ class Main : AppCompatActivity() {
         overlayVisible.value = !overlayVisible.value
     }
 
+    var startedOSRS = false
+
     public override fun onResume() {
         super.onResume()
         updateHideUi()
         overlayView = findViewById(R.id.overlayView)
         overlayView!!.setContent { overlayContent() }
+        if (!startedOSRS) {
+            initDisplay()
+            startOSRS()
+            initManagers()
+            subscribeEvents()
+            startedOSRS = true
+        }
     }
 
     fun initManagers() {
@@ -187,8 +195,16 @@ class Main : AppCompatActivity() {
         val windowMetrics = activity!!.windowManager.currentWindowMetrics
         val insets: Insets = windowMetrics.windowInsets
                 .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
-        GameEngine.width = windowMetrics.bounds.width()// - insets.left - insets.right
-        GameEngine.height = windowMetrics.bounds.height()// - insets.top - insets.bottom
+        if (windowMetrics.bounds.width() > windowMetrics.bounds.height()) {
+            GameEngine.width = windowMetrics.bounds.width()// - insets.left - insets.right
+            GameEngine.height = windowMetrics.bounds.height()// - insets.top - insets.bottom
+        } else {
+            GameEngine.width = windowMetrics.bounds.height()// - insets.left - insets.right
+            GameEngine.height = windowMetrics.bounds.width()// - insets.top - insets.bottom
+        }
+
+        println("Width: ${GameEngine.width}")
+        println("Height: ${GameEngine.height}")
         gameViewBitmap =
                 Bitmap.createBitmap(IntArray(GameEngine.width * GameEngine.height), GameEngine.width, GameEngine.height, Bitmap.Config.RGB_565)
                         .copy(Bitmap.Config.RGB_565, true)
@@ -213,7 +229,22 @@ class Main : AppCompatActivity() {
     }
 
     fun subscribeEvents() {
-        eventBus.subscribe<ClientTick>(Events.CLIENT_TICK) {
+        eventBus.subscribe<LoginStateChanged>(Events.LOGIN_STATE_CHANGED) {
+            println("new Login state: ${it.data.index}")
+        }
+        eventBus.subscribe<GameStateChanged>(Events.GAME_STATE_CHANGED) {
+            println("new Game state: ${it.data.gameState}")
+        }
+        eventBus.subscribe<LoginIndexChanged>(Events.LOGIN_INDEX_CHANGED) {
+/*            if (it.data.newLoginIndex == 2) {
+                //we freeze here
+                Login.Login_username = Secrets.username
+                Login.Login_password = Secrets.password
+                class19.updateGameState(20)
+            }*/
+            println("new Login index: ${it.data.newLoginIndex}")
+        }
+        eventBus.subscribe<Draw>(Events.DRAW) {
             pendingLeftClick?.let {
                 MouseHandler.mousePressed(it, 1)
                 pendingLeftClick = null
@@ -223,26 +254,15 @@ class Main : AppCompatActivity() {
                 pendingRightClick = null
             }
         }
-        eventBus.subscribe<LoginStateChanged>(Events.LOGIN_STATE_CHANGED) {
-            println("new Login state: ${it.data.index}")
-        }
-        eventBus.subscribe<GameStateChanged>(Events.GAME_STATE_CHANGED) {
-            println("new Game state: ${it.data.gameState}")
-        }
-        eventBus.subscribe<LoginIndexChanged>(Events.LOGIN_INDEX_CHANGED) {
-            if (it.data.newLoginIndex == 2) {
-                //we freeze here
-                Login.Login_username = Secrets.username
-                Login.Login_password = Secrets.password
-                class19.updateGameState(20)
+        eventBus.subscribe<SelectedLoginField>(Events.SELECTED_LOGIN_FIELD) {
+            if (client.gameState == GameState.LOGIN_SCREEN) {
+
+                val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_NOT_ALWAYS)
             }
-            println("new Login index: ${it.data.newLoginIndex}")
-        }
-        eventBus.subscribe<Draw>(Events.DRAW) {
-            updateGameImage()
         }
         eventBus.subscribe<LoadingTextChanged>(Events.LOADING_TEXT_CHANGED) {
-            if (it.data.newText.contains("checking for updates", ignoreCase = true)) {
+            if (it.data.newText.contains("Loaded title screen", ignoreCase = true)) {
                 splashFinished.value = true
             }
 
@@ -250,16 +270,16 @@ class Main : AppCompatActivity() {
         }
     }
 
-/*    fun calculateNotchOffset() {
-        val deviceName = DeviceName.getDeviceName()
-        println("Device: $deviceName")
+    /*    fun calculateNotchOffset() {
+            val deviceName = DeviceName.getDeviceName()
+            println("Device: $deviceName")
 
-        //Notches
-        //S22 Ultra
-        if (deviceName == "b0q") {
-            GameEngine.width += 125
-        }
-    }*/
+            //Notches
+            //S22 Ultra
+            if (deviceName == "b0q") {
+                GameEngine.width += 125
+            }
+        }*/
 
     @SuppressLint("NewApi")
     private fun updateHideUi() {
@@ -279,7 +299,7 @@ class Main : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 or WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES)
         window.attributes.layoutInDisplayCutoutMode =
-            WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
     }
 
     fun showKeyboard() {
@@ -297,6 +317,8 @@ class Main : AppCompatActivity() {
         }
     }
 
+    var downTime: Long? = null
+
     @SuppressLint("ClickableViewAccessibility")
     fun touchListener() : OnTouchListener {
         return OnTouchListener{ _: View, event: MotionEvent ->
@@ -310,25 +332,31 @@ class Main : AppCompatActivity() {
                     downStartPosition = point
                     mouseDown = System.currentTimeMillis()
                     MouseHandler.mouseMoved(point)
-                    pendingLeftClick = point
+                    if (client.gameState == GameState.LOGIN_SCREEN) {
+                        pendingLeftClick = point
+                        return@OnTouchListener true
+                    }
+                    downTime = System.currentTimeMillis()
                     println("Touch down x:$touchX y:$touchY")
                 }
                 MotionEvent.ACTION_UP -> {
-                    if (System.currentTimeMillis() > (mouseDown + 500)
-                            && abs(downStartPosition!!.x - point.x) < 30
-                            && abs(downStartPosition!!.y - point.y) < 30) {
-                        pendingRightClick = point
-                        pendingLeftClick = null
-                    } else {
-                        mouseDown = -1
+                    downTime?.let {
+                        if (System.currentTimeMillis() < (mouseDown + 250)) {
+                            pendingLeftClick = point
+                            return@OnTouchListener true
+                        } else if (abs(downStartPosition!!.x - point.x) < 30
+                                && abs(downStartPosition!!.y - point.y) < 30) {
+                            pendingRightClick = point
+                            pendingLeftClick = null
+                        }
+                        downStartPosition = null
+                        GameEngine.movingCamera = false
+                        println("Touch up x:$touchX y:$touchY")
+                        MouseHandler.mouseReleased()
                     }
-                    downStartPosition = null
-                    GameEngine.movingCamera = false
-                    println("Touch up x:$touchX y:$touchY")
-                    MouseHandler.mouseReleased()
                 }
                 MotionEvent.ACTION_MOVE -> {
-                    if (System.currentTimeMillis() > (mouseDown + 500)) {
+                    if (System.currentTimeMillis() > (mouseDown + 250)) {
                         GameEngine.movingCamera = true
                     }
                     MouseHandler.mouseMoved(point)
@@ -364,7 +392,7 @@ class Main : AppCompatActivity() {
 
             try {
                 gameViewBitmap!!.setPixels(
-                        StudioGame.rasterProvider.pixels, 0, StudioGame.rasterProvider.width,
+                        client.graphicsPixels, 0, StudioGame.rasterProvider.width,
                         0, 0, StudioGame.rasterProvider.width, StudioGame.rasterProvider.height
                 )
             } catch (_: java.lang.Exception) {
@@ -385,13 +413,13 @@ class Main : AppCompatActivity() {
             asciiKey = 8
 
         //TODO
-/*        if (event.action == KeyEvent.ACTION_DOWN) {
-            KeyHandler.keyPressed(asciiKey)
-        }
-        if (event.action == KeyEvent.ACTION_UP) {
-            KeyHandler.keyReleased(asciiKey)
-            KeyHandler.keyTyped(event)
-        }*/
+        /*        if (event.action == KeyEvent.ACTION_DOWN) {
+                    KeyHandler.keyPressed(asciiKey)
+                }
+                if (event.action == KeyEvent.ACTION_UP) {
+                    KeyHandler.keyReleased(asciiKey)
+                    KeyHandler.keyTyped(event)
+                }*/
         return super.dispatchKeyEvent(event)
     }
 }
