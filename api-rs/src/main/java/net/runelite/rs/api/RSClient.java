@@ -404,6 +404,9 @@ public interface RSClient extends RSGameEngine, Client
 	@Override
 	boolean isResized();
 
+	@Import("isResizable")
+	void setIsResized(boolean isResized);
+
 	@Import("rootWidgetXs")
 	@Override
 	int[] getWidgetPositionsX();

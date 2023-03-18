@@ -1329,7 +1329,7 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi {
 
       int var1;
       try {
-         if (class293.musicPlayerStatus == 1) {
+/*         if (class293.musicPlayerStatus == 1) {
             var1 = class293.midiPcmStream.method1564();
             if (var1 > 0 && class293.midiPcmStream.isReady()) {
                var1 -= AbstractRasterProvider.pcmSampleLength;
@@ -1350,17 +1350,17 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi {
                BufferedNetSocket.musicTrack = null;
                class293.soundCache = null;
             }
-         }
+         }*/
       } catch (Exception var5) {
-         var5.printStackTrace();
+/*         var5.printStackTrace();
          class293.midiPcmStream.clear();
          class293.musicPlayerStatus = 0;
          BufferedNetSocket.musicTrack = null;
          class293.soundCache = null;
-         class364.musicTrackArchive = null;
+         class364.musicTrackArchive = null;*/
       }
 
-      EnumComposition.playPcmPlayers();
+      //EnumComposition.playPcmPlayers();
       keyHandlerInstance.method1092();
       this.method145();
       MouseHandler var3 = MouseHandler.MouseHandler_instance;
@@ -1385,10 +1385,12 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi {
          GrandExchangeOfferOwnWorldComparator.load();
          Strings.method1804();
       } else if (gameState == 5) {
+
          class288.method1552(this, Calendar.fontPlain11, class420.fontPlain12);
          GrandExchangeOfferOwnWorldComparator.load();
          Strings.method1804();
       } else if (gameState != 10 && gameState != 11) {
+
          if (gameState == 20) {
             class288.method1552(this, Calendar.fontPlain11, class420.fontPlain12);
             this.doCycleLoggedOut();
@@ -1407,7 +1409,6 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi {
       } else if (gameState == 40 || gameState == 45) {
          this.doCycleLoggedOut();
       }
-
    }
 
    @ObfuscatedName("ba")
@@ -1432,7 +1433,7 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi {
             field594[var3] = true;
          }
       }
-
+      System.out.println("checking draw");
       if (gameState == 0) {
          this.drawInitial(Login.Login_loadingPercent, Login.Login_loadingText, var1);
       } else if (gameState == 5) {

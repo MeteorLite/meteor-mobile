@@ -57,7 +57,7 @@ public class MilliClock extends Clock {
          this.field1438 = var3;
          this.field1436 = var4;
       } else if (this.field1439 > this.field1437[this.field1441]) {
-         this.field1438 = (int)((long)(var1 * 2560) / (this.field1439 - this.field1437[this.field1441]));
+         this.field1438 = (int)((long)(var1 * 2560L) / (this.field1439 - this.field1437[this.field1441]));
       }
 
       if (this.field1438 < 25) {

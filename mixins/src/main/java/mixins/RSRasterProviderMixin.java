@@ -50,16 +50,4 @@ public abstract class RSRasterProviderMixin implements RSRasterProvider
 
 		setImage(bufferedImage);
 	}
-
-	/**
-	 * Replacing this method makes it so we can completely
-	 * control when/what is drawn on the game's canvas,
-	 * as the method that is replaced draws
-	 * the game's image on the canvas.
-	 */
-	@Replace("drawFull0")
-	final void draw(Graphics graphics, int x, int y)
-	{
-		client.getCallbacks().draw(this, graphics, x, y);
-	}
 }

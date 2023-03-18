@@ -496,7 +496,7 @@ public abstract class RSClientMixin implements RSClient {
     @Override
     public void setGameState(GameState gameState) {
         assert this.isClientThread() : "setGameState must be called on client thread";
-        setGameState(gameState.getState());
+        setGameState(gameState.id);
     }
 
     @Inject
@@ -2411,7 +2411,9 @@ public abstract class RSClientMixin implements RSClient {
     @Inject
     @MethodHook("doCycle")
     protected final void doCycle$pre() {
-        client.getCallbacks().tick();
+        //This can be null for a very, very short duration during startup
+        if (client.getCallbacks() != null)
+            client.getCallbacks().tick();
     }
 
     @Inject
@@ -3254,5 +3256,11 @@ public abstract class RSClientMixin implements RSClient {
     @FieldHook("Login_loadingText")
     public static void onLoadingTextChanged(int idx) {
         client.getCallbacks().post(Events.LOADING_TEXT_CHANGED, new LoadingTextChanged(client.getLoadingText()));
+    }
+
+    @Inject
+    @FieldHook("isResizable")
+    public static void onIsResizedChanged(int idx) {
+        client.setIsResized(true);
     }
 }

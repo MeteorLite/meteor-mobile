@@ -4,6 +4,7 @@ package osrs;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;*/
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -396,7 +397,7 @@ public final class class288 {
 
                         label1528:
                         while(true) {
-/*                           Transferable var57;
+                           //Transferable var57;
                            do {
                               while(true) {
                                  char var51;
@@ -424,7 +425,7 @@ public final class class288 {
                                                 Login.Login_username = Login.Login_username + var28.field1824;
                                              }
                                           } else {
-                                             class14.method52(0);
+                                             class14.setLoginIndex(0);
                                              Login.Login_username = "";
                                              Login.Login_password = "";
                                              FriendSystem.field663 = 0;
@@ -461,8 +462,8 @@ public final class class288 {
                                  }
 
                                  if ((var28.getKeyPressed(82) || var28.getKeyPressed(87)) && var28.field1823 == 67) {
-                                    Clipboard var56 = Toolkit.getDefaultToolkit().getSystemClipboard();
-                                    var57 = var56.getContents(class392.client);
+/*                                    Clipboard var56 = Toolkit.getDefaultToolkit().getSystemClipboard();
+                                    var57 = var56.getContents(class392.client);*/
                                     var15 = 20 - Login.Login_password.length();
                                     break;
                                  }
@@ -475,39 +476,36 @@ public final class class288 {
                                     }
                                  }
                               }
-                           } while(var15 <= 0);*/
-/*
+                           } while(var15 <= 0);
                            try {
-                              String var16 = (String)var57.getTransferData(DataFlavor.stringFlavor);
-                              int var17 = Math.min(var15, var16.length());
+                              //String var16 = (String)var57.getTransferData(DataFlavor.stringFlavor);
+                              //int var17 = Math.min(var15, var16.length());
                               int var52 = 0;
 
-                              while(true) {
-                                 if (var52 >= var17) {
+/*                              while(true) {
+       *//*                          if (var52 >= var17) {
                                     Login.Login_password = Login.Login_password + var16.substring(0, var17);
                                     continue label1528;
-                                 }
+                                 }*//*
 
-                                 if (!ReflectionCheck.method180(var16.charAt(var52))) {
+*//*                                 if (!ReflectionCheck.method180(var16.charAt(var52))) {
                                     break;
-                                 }
+                                 }*//*
 
-                                 char var54 = var16.charAt(var52);
+    *//*                             char var54 = var16.charAt(var52);
                                  boolean var19 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!\"ï¿½$%^&*()-_=+[{]};:'@#~,<.>/?\\| ".indexOf(var54) != -1;
                                  if (!var19) {
                                     break;
-                                 }
+                                 }*//*
 
                                  ++var52;
-                              }
+                              }*/
 
-                              class14.method52(3);
+                              class14.setLoginIndex(3);
                               return;
-                           } catch (UnsupportedFlavorException var41) {
+                           } catch (Exception e) {
                               ;
-                           } catch (IOException var42) {
-                              ;
-                           }*/
+                           }
                         }
                      } else {
                         Bounds var31;
@@ -999,6 +997,7 @@ public final class class288 {
                                  }
                               } else {
                                  while(true) {
+
                                     do {
                                        if (!var28.method1090()) {
                                           var46 = 321;

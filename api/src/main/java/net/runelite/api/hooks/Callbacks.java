@@ -25,6 +25,7 @@
 package net.runelite.api.hooks;
 
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import net.runelite.api.MainBufferProvider;
 import net.runelite.api.Renderable;
@@ -83,7 +84,7 @@ public interface Callbacks
 	 * @param x                  the x
 	 * @param y                  the y
 	 */
-	void draw(MainBufferProvider mainBufferProvider, Graphics graphics, int x, int y);
+	void draw(BufferedImage mainBufferProvider, Graphics graphics, int x, int y);
 
 	/**
 	 * Called after an interface has been drawn

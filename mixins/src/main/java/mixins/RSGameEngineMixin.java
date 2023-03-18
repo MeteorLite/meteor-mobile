@@ -27,6 +27,8 @@ package mixins;
 import eventbus.Events;
 import eventbus.events.Draw;
 import eventbus.events.FocusChanged;
+import eventbus.events.SelectedLoginField;
+
 import net.runelite.api.hooks.DrawCallbacks;
 import net.runelite.api.mixins.Copy;
 import net.runelite.api.mixins.FieldHook;
@@ -36,7 +38,10 @@ import net.runelite.api.mixins.Mixin;
 import net.runelite.api.mixins.Replace;
 import net.runelite.api.mixins.Shadow;
 import net.runelite.rs.api.RSClient;
+import net.runelite.rs.api.RSFont;
 import net.runelite.rs.api.RSGameEngine;
+
+import java.awt.Graphics;
 
 @Mixin(RSGameEngine.class)
 public abstract class RSGameEngineMixin implements RSGameEngine
@@ -124,6 +129,21 @@ public abstract class RSGameEngineMixin implements RSGameEngine
 	@Inject
 	@MethodHook(value = "graphicsTick", end = true)
 	public void onGraphicsTick() {
+		client.getCallbacks().draw(getGameImage(), getGameImage().getGraphics(), 0, 0);
 		client.getCallbacks().post(Events.DRAW, Draw.INSTANCE);
 	}
+
+	@Inject
+	@MethodHook(value = "drawTitle", end = true)
+	public static void onDrawTitle(RSFont f1, RSFont f2, RSFont f3) {
+		client.getCallbacks().post(Events.DRAW, Draw.INSTANCE);
+	}
+
+	@Inject
+	@FieldHook(value = "currentLoginField")
+	public static void onLoginFieldSelectionChanged(int idx) {
+		client.getCallbacks().post(Events.SELECTED_LOGIN_FIELD, SelectedLoginField.INSTANCE);
+	}
+
+
 }

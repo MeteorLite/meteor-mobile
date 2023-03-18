@@ -23,13 +23,23 @@ class ConfigItem(    val group: String,
                      val disabledByValue: String = "",
                      val textArea: Boolean = false,
                      val textField: Boolean = false,
-                     val composePanel: Boolean = false,) {
+                     val composePanel: Boolean = false,
+                     val min: Int = -1,
+                     val max: Int = -1,) {
 
     inline fun <reified T> get() : T? {
         return ConfigManager.getConfiguration(group, keyName, T::class.java)
     }
 
+    fun getSavedValue() : Any? {
+        return ConfigManager.getConfiguration(group, keyName, defaultValue.javaClass)
+    }
+
     fun set(value: Any) {
         ConfigManager.setConfiguration(group, keyName, value)
+    }
+
+    override operator fun equals(other: Any?): Boolean {
+        return getSavedValue() == other
     }
 }
