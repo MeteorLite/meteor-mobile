@@ -18,7 +18,6 @@ class NeverLogoutPlugin : Plugin() {
     private val random = Random()
 
     override fun onGameTick(it: GameTick) {
-        Main.logger.warn("resetting logout timers")
         if (randomTick == -1) {
             if (client.keyboardIdleTicks > randomTick) {
                 generateRandomTick()
