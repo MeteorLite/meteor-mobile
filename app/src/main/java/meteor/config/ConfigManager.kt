@@ -66,6 +66,7 @@ object ConfigManager {
     }
 
     fun stringToObject(str: String, type: Class<*>): Any? {
+        println("type: ${type.name}")
         if (type == Boolean::class.javaPrimitiveType || type == Boolean::class.java) {
             return (str).toBoolean()
         }
@@ -224,29 +225,29 @@ object ConfigManager {
         return properties.getProperty(getWholeKey(groupName, key))
     }
 
-    inline fun <reified T> getConfiguration(groupName: String, key: String, type: T): T? {
+    inline fun <reified T> getConfiguration(groupName: String, key: String, type: Class<out Any>): T? {
         val value = getConfiguration(groupName, key)
         if (!Strings.isNullOrEmpty(value)) {
             try {
                 when (T::class) {
-                    Boolean::class -> return stringToObject(value!!, T::class.java).toString().toBoolean() as T
-                    Int::class -> return stringToObject(value!!, T::class.java).toString().toInt() as T
-                    Color::class.java -> return colorFromString(stringToObject(value!!, T::class.java).toString()) as T
-                    Double::class -> return stringToObject(value!!, T::class.java).toString().toDouble() as T
+                    Boolean::class -> return stringToObject(value!!, type).toString().toBoolean() as T
+                    Int::class -> return stringToObject(value!!, type).toString().toInt() as T
+                    Color::class.java -> return colorFromString(stringToObject(value!!, type).toString()) as T
+                    Double::class -> return stringToObject(value!!, type).toString().toDouble() as T
                     Dimension::class.java -> return {
-                        val splitStr = stringToObject(value!!, T::class.java).toString().split("x").toTypedArray()
+                        val splitStr = stringToObject(value!!, type).toString().split("x").toTypedArray()
                         val width = splitStr[0].toInt()
                         val height = splitStr[1].toInt()
                         Dimension(width, height)
                     } as T
                     Point::class.java -> return {
-                        val splitStr = stringToObject(value!!, T::class.java).toString().split(":").toTypedArray()
+                        val splitStr = stringToObject(value!!, type).toString().split(":").toTypedArray()
                         val width = splitStr[0].toInt()
                         val height = splitStr[1].toInt()
                         Point(width, height)
                     } as T
                     Rectangle::class.java -> return {
-                        val splitStr = stringToObject(value!!, T::class.java).toString().split(":").toTypedArray()
+                        val splitStr = stringToObject(value!!, type).toString().split(":").toTypedArray()
                         val x = splitStr[0].toInt()
                         val y = splitStr[1].toInt()
                         val width = splitStr[2].toInt()
@@ -254,7 +255,7 @@ object ConfigManager {
                         Rectangle(x, y, width, height)
                     } as T
                 }
-                return stringToObject(value!!, T::class.java) as T
+                return stringToObject(value!!, type) as T
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
                 Main.logger.warn("Unable to unmarshal {} ", getWholeKey(groupName, key), e);
@@ -345,7 +346,7 @@ object ConfigManager {
             if (!override) {
                 // This checks if it is set and is also unmarshallable to the correct type; so
                 // we will overwrite invalid config values with the default
-                val current = getConfiguration(clazz.group, configItem.keyName, configItem.defaultValue)
+                val current = getConfiguration<String>(clazz.group, configItem.keyName, clazz::class.java)
                 if (current != null) {
                     continue  // something else is already set
                 }

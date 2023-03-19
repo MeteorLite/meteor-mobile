@@ -1,5 +1,10 @@
 package meteor.config
 
+import java.awt.Color
+import java.awt.Dimension
+import java.awt.Point
+import java.awt.Rectangle
+
 class ConfigItem<T>(val group: String,
                            val position: Int = Int.MAX_VALUE,
                            val keyName: String,
@@ -30,9 +35,35 @@ class ConfigItem<T>(val group: String,
 
     @Suppress("UNCHECKED_CAST")
     fun get() : T? {
-        val config = ConfigManager.getConfiguration(group, keyName, defaultValue!!::class.java)
+        val config = ConfigManager.getConfiguration(group, keyName)
         config?.let {
-            return config as T?
+            when (defaultValue!!::class) {
+                Boolean::class -> return config.toBoolean() as T
+                Int::class -> return config.toInt() as T
+                Color::class.java -> return ConfigManager.colorFromString(config) as T
+                Double::class -> return config.toDouble() as T
+                Dimension::class.java -> return {
+                    val splitStr = config.split("x").toTypedArray()
+                    val width = splitStr[0].toInt()
+                    val height = splitStr[1].toInt()
+                    Dimension(width, height)
+                } as T
+                Point::class.java -> return {
+                    val splitStr = config.split(":").toTypedArray()
+                    val width = splitStr[0].toInt()
+                    val height = splitStr[1].toInt()
+                    Point(width, height)
+                } as T
+                Rectangle::class.java -> return {
+                    val splitStr = config.split(":").toTypedArray()
+                    val x = splitStr[0].toInt()
+                    val y = splitStr[1].toInt()
+                    val width = splitStr[2].toInt()
+                    val height = splitStr[3].toInt()
+                    Rectangle(x, y, width, height)
+                } as T
+                else -> {}
+            }
         }
         return defaultValue
     }

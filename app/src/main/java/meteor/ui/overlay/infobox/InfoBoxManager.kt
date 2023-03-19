@@ -238,7 +238,7 @@ object InfoBoxManager : EventSubscriber() {
         return ConfigManager
             .getConfiguration(
                 INFOBOXOVERLAY_KEY, INFOBOXOVERLAY_ORIENTATION_PREFIX + name,
-                ComponentOrientation.HORIZONTAL
+                ComponentOrientation::class.java
             )
     }
 
