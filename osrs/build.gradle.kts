@@ -38,5 +38,6 @@ dependencies {
     implementation(project(":api"))
     implementation(project(":api-rs"))
     implementation(project(":eventbus"))
-    implementation("org.bouncycastle:bcprov-jdk15on:1.64")
+    implementation("org.bouncycastle:bcpkix-jdk15to18:1.64")
+    implementation("org.bouncycastle:bcprov-jdk15to18:1.64")
 }

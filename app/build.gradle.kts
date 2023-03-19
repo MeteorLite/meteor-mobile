@@ -75,7 +75,8 @@ dependencies {
     implementation(files("./libs/injected-client.jar"))
     implementation("androidx.compose.material3:material3:1.1.0-alpha08")
 
-    implementation("org.bouncycastle:bcprov-jdk15on:1.64")
+    implementation("org.bouncycastle:bcpkix-jdk15to18:1.64")
+    implementation("org.bouncycastle:bcprov-jdk15to18:1.64")
     implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.12.0")
     implementation("androidx.activity:activity-compose:1.6.1")
     implementation(group = "com.google.guava", name = "guava", version = "31.1-android")

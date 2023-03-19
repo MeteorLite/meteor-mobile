@@ -13,7 +13,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnHoverListener
 import android.view.View.OnTouchListener
-import android.view.ViewTreeObserver
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -116,9 +115,11 @@ class Main : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        System.setProperty("jagex.disableBouncyCastle", "true")
         DeviceName.init(this)
         setContentView(R.layout.activity_main)
-        window.decorView.setBackgroundColor(android.graphics.Color.BLACK)
+        window.decorView.setBackgroundColor(BLACK)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         updateHideUi()
     }

@@ -923,7 +923,7 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi {
    @ObfuscatedName("gt")
    Future field398;
    @ObfuscatedName("hb")
-   boolean field479 = false;
+   boolean disableBouncyCastle = false;
    @ObfuscatedName("hc")
    @ObfuscatedSignature(
       descriptor = "Lag;"
@@ -1268,7 +1268,7 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi {
       CollisionMap.field1830 = class311.field2820;
       class128.field1231 = class311.field2823;
       class126.field1199 = class311.field2819;
-      class345.urlRequester = new class110(this.field479, 212);
+      class345.urlRequester = new class110(this.disableBouncyCastle, 212);
       this.setUpKeyboard();
       this.method146();
       class7.mouseWheel = this.mouseWheel();
@@ -1591,7 +1591,7 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi {
       if (var6 != null) {
          this.field425 = var6.request(var5.method26(), var3, var4.method2050(), "");
       } else {
-         class10 var7 = new class10(var3, var5, var4, this.field479);
+         class10 var7 = new class10(var3, var5, var4, this.disableBouncyCastle);
          this.field400 = this.field395.method50(var7);
       }
    }
@@ -1610,7 +1610,7 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi {
       if (var5 != null) {
          this.field398 = var5.request(var4.method26(), var2, var3.method2050(), "");
       } else {
-         class10 var6 = new class10(var2, var4, var3, this.field479);
+         class10 var6 = new class10(var2, var4, var3, this.disableBouncyCastle);
          this.field396 = this.field395.method50(var6);
       }
    }
@@ -1622,7 +1622,7 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi {
    )
    void method352(String var1, String var2) throws IOException, JSONException {
       URL var3 = new URL(MoveSpeed.field1841 + "/game-session/v1/tokens");
-      class10 var4 = new class10(var3, class9.field23, this.field479);
+      class10 var4 = new class10(var3, class9.field23, this.disableBouncyCastle);
       var4.method30().method2051(var1);
       var4.method30().method2058(class431.field3770);
       JSONObject var5 = new JSONObject();
@@ -5895,7 +5895,7 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi {
          class458.field3923 = clientType;
          ObjectComposition.method1033();
          if (Boolean.parseBoolean(System.getProperty("jagex.disableBouncyCastle"))) {
-            this.field479 = true;
+            this.disableBouncyCastle = true;
          }
          } catch (Exception e) {
             System.out.println(e);
