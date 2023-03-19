@@ -62,7 +62,7 @@ public class CreateObfuscatedClassMap extends AbstractInjector
 		{
 			deobClass.getAnnotations().forEach((type, annotation) -> {
 				if (annotation.getType().equals(DeobAnnotations.OBFUSCATED_NAME)) {
-					mappingsBuilder.append("		INSTANCE.put(\"" + deobClass.getName() + "\", \"" + annotation.getValueString() + "\");\n");
+					mappingsBuilder.append("		INSTANCE.put(\"" + deobClass.getName().replace("/", ".") + "\", \"" + annotation.getValueString() + "\");\n");
 				}
 			});
 		}
