@@ -12,33 +12,25 @@ import net.runelite.mapping.ObfuscatedSignature;
 import net.runelite.rs.ObfuscatedClassMap;
 
 public class Reflection {
-	static Map<String, Class<?>> classes = new HashMap<>();
 
 	//These are mixed in
 	public static void reportFindClass(String className) {}
 	public static void reportFindField(Class<?> className, String fieldName) {}
 	public static void reportInvoke(Method method, Object object, Object[] args) {}
 
-	static {
-		ObfuscatedClassMap.INSTANCE.forEach((deobClassName, obfuscatedClassName) -> {
-			if (!deobClassName.contains("/") && !obfuscatedClassName.contains("/")) {
-				Class<?> c = null;
+	public static Class<?> findClass(String name) throws ClassNotFoundException {
+		for (Map.Entry<String, String> pair : ObfuscatedClassMap.INSTANCE.entrySet()) {
+			if (pair.getValue().equals(name)) {
 				try {
-					c = Class.forName(deobClassName);
+					Class<?> clazz = Class.forName(pair.getKey());
+					reportFindClass(clazz.getName());
+					return clazz;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				classes.put(obfuscatedClassName, c);
 			}
-		});
-	}
-
-	public static Class<?> findClass(String name) throws ClassNotFoundException {
-		Class<?> clazz = classes.get(name);
-		if (clazz != null) {
-			reportFindClass(clazz.getName());
-			return clazz;
 		}
+
 		return Class.forName(name);
 	}
 
