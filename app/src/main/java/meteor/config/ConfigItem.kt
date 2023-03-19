@@ -25,7 +25,8 @@ class ConfigItem(    val group: String,
                      val textField: Boolean = false,
                      val composePanel: Boolean = false,
                      val min: Int = -1,
-                     val max: Int = -1,) {
+                     val max: Int = -1,
+                     val secret: Boolean = false) {
 
     inline fun <reified T> get() : T? {
         return ConfigManager.getConfiguration(group, keyName, T::class.java)

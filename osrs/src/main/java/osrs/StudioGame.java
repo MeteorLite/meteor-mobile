@@ -53,7 +53,7 @@ public enum StudioGame implements class352 {
       descriptor = "Lsm;"
    )
    @Export("rasterProvider")
-   public static AbstractRasterProvider rasterProvider;
+   public static AbstractRasterProvider rasterProvider = null;
    @ObfuscatedName("av")
    @Export("name")
    public final String name;

@@ -1,19 +1,23 @@
 package meteor
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.Color.BLACK
 import android.graphics.Insets
 import android.os.Bundle
+import android.text.InputType
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnHoverListener
 import android.view.View.OnTouchListener
+import android.view.ViewTreeObserver
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
@@ -184,6 +188,9 @@ class Main : AppCompatActivity() {
             subscribeEvents()
             startedOSRS = true
         }
+        if (client.gameState == GameState.LOGIN_SCREEN_AUTHENTICATOR) {
+            overlayView!!.rootView.focusAndShowKeyboard()
+        }
     }
 
     fun initManagers() {
@@ -228,6 +235,17 @@ class Main : AppCompatActivity() {
             Thread.sleep(100)
     }
 
+    fun showSoftKeyboard() {
+        runOnUiThread {
+            window.decorView.focusAndShowKeyboard()
+        }
+    }
+
+    fun View.focusAndShowKeyboard() {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(this, InputMethodManager.SHOW_FORCED)
+    }
+
     fun subscribeEvents() {
         eventBus.subscribe<LoginStateChanged>(Events.LOGIN_STATE_CHANGED) {
             println("new Login state: ${it.data.index}")
@@ -236,16 +254,22 @@ class Main : AppCompatActivity() {
             println("new Game state: ${it.data.gameState}")
         }
         eventBus.subscribe<LoginIndexChanged>(Events.LOGIN_INDEX_CHANGED) {
-/*            if (it.data.newLoginIndex == 2) {
-                //we freeze here
-                Login.Login_username = Secrets.username
-                Login.Login_password = Secrets.password
-                class19.updateGameState(20)
-            }*/
-            println("new Login index: ${it.data.newLoginIndex}")
+            println("new Login Index: ${it.data.newLoginIndex}")
         }
         eventBus.subscribe<Draw>(Events.DRAW) {
+
             pendingLeftClick?.let {
+                if (client.gameState == GameState.LOGIN_SCREEN_AUTHENTICATOR) {
+                    val editText = EditText(this)
+                    editText.inputType = InputType.TYPE_CLASS_NUMBER
+
+                    println("Showing Keyboard")
+                    runOnUiThread {
+                        showSoftKeyboard()
+                    }
+                    pendingLeftClick = null
+                    return@subscribe
+                }
                 MouseHandler.mousePressed(it, 1)
                 pendingLeftClick = null
             }
@@ -255,10 +279,8 @@ class Main : AppCompatActivity() {
             }
         }
         eventBus.subscribe<SelectedLoginField>(Events.SELECTED_LOGIN_FIELD) {
-            if (client.gameState == GameState.LOGIN_SCREEN) {
-
-                val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_NOT_ALWAYS)
+            if (client.gameState == GameState.LOGIN_SCREEN || client.gameState == GameState.LOGIN_SCREEN_AUTHENTICATOR) {
+                showSoftKeyboard()
             }
         }
         eventBus.subscribe<LoadingTextChanged>(Events.LOADING_TEXT_CHANGED) {
@@ -269,17 +291,6 @@ class Main : AppCompatActivity() {
             println("Loading text changed: ${it.data.newText}")
         }
     }
-
-    /*    fun calculateNotchOffset() {
-            val deviceName = DeviceName.getDeviceName()
-            println("Device: $deviceName")
-
-            //Notches
-            //S22 Ultra
-            if (deviceName == "b0q") {
-                GameEngine.width += 125
-            }
-        }*/
 
     @SuppressLint("NewApi")
     private fun updateHideUi() {
@@ -302,11 +313,6 @@ class Main : AppCompatActivity() {
                 WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
     }
 
-    fun showKeyboard() {
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
-    }
-
     fun hoverListener() : OnHoverListener {
         return OnHoverListener{ _: View, event: MotionEvent ->
             val touchX = event.x.toInt()
@@ -315,6 +321,21 @@ class Main : AppCompatActivity() {
             MouseHandler.mouseMoved(point)
             return@OnHoverListener true
         }
+    }
+
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        var asciiKey = event.getUnicodeChar(event.metaState) //metasState = ctrl/shift etc
+        if (event.keyCode == KeyEvent.KEYCODE_DEL)
+            asciiKey = 8
+        val awtEvent = java.awt.event.KeyEvent(asciiKey)
+        if (event.action == KeyEvent.ACTION_DOWN) {
+            KeyHandler.keyPressed(awtEvent)
+        }
+        if (event.action == KeyEvent.ACTION_UP) {
+            KeyHandler.keyReleased(awtEvent)
+            KeyHandler.keyTyped(awtEvent)
+        }
+        return super.dispatchKeyEvent(event)
     }
 
     var downTime: Long? = null
@@ -372,7 +393,7 @@ class Main : AppCompatActivity() {
         runOnUiThread {
             if (!hasSetupGameView) {
                 println("First Render")
-                gameView = findViewById(R.id.imageView)
+                gameView = findViewById(R.id.gameView)
                 gameView!!.setBackgroundColor(BLACK)
                 gameView!!.setOnHoverListener(hoverListener())
                 gameView!!.setOnTouchListener(touchListener())
@@ -405,21 +426,5 @@ class Main : AppCompatActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }
-
-    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-        var asciiKey = event.getUnicodeChar(event.metaState) //metasState = ctrl/shift etc
-        if (event.keyCode == KeyEvent.KEYCODE_DEL)
-            asciiKey = 8
-
-        //TODO
-        /*        if (event.action == KeyEvent.ACTION_DOWN) {
-                    KeyHandler.keyPressed(asciiKey)
-                }
-                if (event.action == KeyEvent.ACTION_UP) {
-                    KeyHandler.keyReleased(asciiKey)
-                    KeyHandler.keyTyped(event)
-                }*/
-        return super.dispatchKeyEvent(event)
     }
 }

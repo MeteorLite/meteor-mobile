@@ -546,7 +546,6 @@ public abstract class GameEngine implements Runnable {
    )
    @Export("graphicsTick")
    void graphicsTick() {
-      System.out.println("gtick");
 /*      Container var1 = this.container();*/
       long var2 = WorldMapSection2.clockNow();
       long var4 = graphicsTickTimes[class212.field1850];

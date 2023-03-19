@@ -7,6 +7,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;*/
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import net.runelite.mapping.ObfuscatedSignature;
 @Implements("KeyHandler")
 public class KeyHandler /*implements KeyListener, FocusListener*/ {
    @ObfuscatedName("al")
-   Collection field77 = new ArrayList(100);
+   static Collection field77 = new ArrayList(100);
    @ObfuscatedName("ac")
    Collection field78 = new ArrayList(100);
    @ObfuscatedName("ab")
@@ -31,10 +32,10 @@ public class KeyHandler /*implements KeyListener, FocusListener*/ {
    class29[] field79 = new class29[3];
    @ObfuscatedName("an")
    @Export("KeyHandler_pressedKeys")
-   boolean[] KeyHandler_pressedKeys = new boolean[112];
+   static boolean[] KeyHandler_pressedKeys = new boolean[112];
    @ObfuscatedName("ao")
    @Export("KeyHandler_idleCycles")
-   volatile int KeyHandler_idleCycles = 0;
+   static volatile int KeyHandler_idleCycles = 0;
 
    @ObfuscatedName("aj")
    @ObfuscatedSignature(
@@ -110,12 +111,11 @@ public class KeyHandler /*implements KeyListener, FocusListener*/ {
       this.field78 = this.field77;
       this.field77 = var1;
    }
-/*
 
    @Export("keyReleased")
    @ObfuscatedName("keyReleased")
-   public final synchronized void keyReleased(KeyEvent var1) {
-      int var2 = var1.getKeyCode();
+   public static final synchronized void keyReleased(KeyEvent var1) {
+      int var2 = Character.toLowerCase((char) var1.getAWTKeyId());
       if (var2 >= 0 && var2 < class365.method1939()) {
          int var3 = class28.KeyHandler_keyCodes[var2];
          var2 = var3 & -129;
@@ -124,8 +124,8 @@ public class KeyHandler /*implements KeyListener, FocusListener*/ {
       }
 
       if (var2 >= 0) {
-         this.KeyHandler_pressedKeys[var2] = false;
-         this.field77.add(new class33(2, var2));
+         KeyHandler_pressedKeys[var2] = false;
+         field77.add(new class33(2, var2));
       }
 
       var1.consume();
@@ -133,16 +133,16 @@ public class KeyHandler /*implements KeyListener, FocusListener*/ {
 
    @Export("keyTyped")
    @ObfuscatedName("keyTyped")
-   public final synchronized void keyTyped(KeyEvent var1) {
-      char var2 = var1.getKeyChar();
+   public static final synchronized void keyTyped(KeyEvent var1) {
+      char var2 = Character.toLowerCase((char) var1.getAWTKeyId());
       if (var2 != 0 && var2 != '\uffff' && WorldMapSection2.method1332(var2)) {
-         this.field77.add(new class33(3, var2));
+         field77.add(new class33(3, var2));
       }
 
       var1.consume();
    }
 
-   public final synchronized void focusGained(FocusEvent var1) {
+/*   public final synchronized void focusGained(FocusEvent var1) {
       this.field77.add(new class33(4, 1));
    }
 
@@ -157,12 +157,12 @@ public class KeyHandler /*implements KeyListener, FocusListener*/ {
       }
 
       this.field77.add(new class33(4, 0));
-   }
+   }*/
 
    @Export("keyPressed")
    @ObfuscatedName("keyPressed")
-   public final synchronized void keyPressed(KeyEvent var1) {
-      int var2 = var1.getKeyCode();
+   public static final synchronized void keyPressed(KeyEvent var1) {
+      int var2 = Character.toLowerCase((char) var1.getAWTKeyId());
       if (var2 >= 0 && var2 < class365.method1939()) {
          int var3 = class28.KeyHandler_keyCodes[var2];
          var2 = var3;
@@ -174,14 +174,13 @@ public class KeyHandler /*implements KeyListener, FocusListener*/ {
       }
 
       if (var2 >= 0) {
-         this.KeyHandler_pressedKeys[var2] = true;
-         this.field77.add(new class33(1, var2));
-         this.KeyHandler_idleCycles = 0;
+         KeyHandler_pressedKeys[var2] = true;
+         field77.add(new class33(1, var2));
+         KeyHandler_idleCycles = 0;
       }
 
       var1.consume();
    }
-*/
 
    @ObfuscatedName("aj")
    @ObfuscatedSignature(

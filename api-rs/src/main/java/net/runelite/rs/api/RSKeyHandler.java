@@ -9,7 +9,4 @@ public interface RSKeyHandler extends KeyFocusListener {
 
   @Import("KeyHandler_idleCycles")
   void setIdleCycles(int i);
-
-  @Import("KeyHandler_pressedKeys")
-  boolean[] getPressedKeys();
 }

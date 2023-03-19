@@ -1,4 +1,4 @@
-package meteor.input
+package java.awt.event
 
 import java.awt.Point
 

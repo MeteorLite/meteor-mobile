@@ -3011,24 +3011,6 @@ public abstract class RSClientMixin implements RSClient {
         return lastInteractionTime;
     }
 
-    @Inject
-    @Override
-    public void setKeyboardIdleTicks(int i) {
-        getKeyHandler().setIdleCycles(i);
-    }
-
-    @Inject
-    @Override
-    public int getKeyboardIdleTicks() {
-        return getKeyHandler().getIdleCycles$api();
-    }
-
-    @Inject
-    @Override
-    public boolean[] getPressedKeys() {
-        return getKeyHandler().getPressedKeys();
-    }
-
     // Kris's events
 
     @FieldHook("cameraShakeSpeed")

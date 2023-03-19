@@ -103,7 +103,8 @@ class ReportButtonPlugin : Plugin() {
 
     @Schedule(period = 500, unit = ChronoUnit.MILLIS)
     fun updateSchedule() {
-        updateReportButtonTime()
+        if (running)
+            updateReportButtonTime()
     }
 
     private fun updateReportButtonTime() {
