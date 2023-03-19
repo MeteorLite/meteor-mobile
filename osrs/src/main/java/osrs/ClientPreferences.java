@@ -9,8 +9,6 @@ import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
-import meteor.Secrets;
-
 @ObfuscatedName("db")
 @Implements("ClientPreferences")
 public class ClientPreferences {
@@ -206,8 +204,6 @@ public class ClientPreferences {
    )
    @Export("getIsUsernameHidden")
    boolean getIsUsernameHidden() {
-      if (!Secrets.username.isEmpty())
-         return true;
       return this.hideUsername;
    }
 

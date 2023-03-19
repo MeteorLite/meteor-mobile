@@ -25,6 +25,7 @@
 package meteor.input
 
 import meteor.Configuration
+import java.awt.event.MouseEvent
 import java.util.concurrent.CopyOnWriteArrayList
 
 object MouseManager {

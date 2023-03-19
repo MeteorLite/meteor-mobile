@@ -1433,7 +1433,6 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi {
             field594[var3] = true;
          }
       }
-      System.out.println("checking draw");
       if (gameState == 0) {
          this.drawInitial(Login.Login_loadingPercent, Login.Login_loadingText, var1);
       } else if (gameState == 5) {

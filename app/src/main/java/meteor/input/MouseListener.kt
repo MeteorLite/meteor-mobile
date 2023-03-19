@@ -24,6 +24,8 @@
  */
 package meteor.input
 
+import java.awt.event.MouseEvent
+
 
 interface MouseListener {
     fun mouseClicked(mouseEvent: MouseEvent): MouseEvent

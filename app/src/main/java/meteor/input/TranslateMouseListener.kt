@@ -27,6 +27,7 @@ package meteor.input
 
 import meteor.Main
 import java.awt.Point
+import java.awt.event.MouseEvent
 
 object TranslateMouseListener : MouseListener {
     val client = Main.client

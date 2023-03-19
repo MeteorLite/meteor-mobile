@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import meteor.Main
 import meteor.config.ConfigManager
 import meteor.plugins.agility.AgilityPlugin
+import meteor.plugins.autologin.AutoLoginPlugin
 import meteor.plugins.neverlog.NeverLogoutPlugin
 import meteor.plugins.reportbutton.ReportButtonPlugin
 import meteor.task.Schedule
@@ -26,6 +27,7 @@ object PluginManager {
         //init<Meteor>()
         if (pluginsEnabled) {
             init<AgilityPlugin>()
+            init<AutoLoginPlugin>()
             init<NeverLogoutPlugin>()
             init<ReportButtonPlugin>()
         }
