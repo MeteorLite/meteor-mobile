@@ -27,11 +27,11 @@ var pluginPanel = mutableStateOf<PluginPanel?>(null)*/
 var searchValue = mutableStateOf("")
 //var lastButtonClicked : ToolbarButton? = null
 lateinit var lastPlugin: Plugin
-val pluginListSize = mutableStateOf(Main.meteorConfig.pluginListTextSize.get<Int>()!!)
-val pluginSpacer = mutableStateOf(Main.meteorConfig.pluginListSpacer.get<Int>()!!)
-val darkLightMode = mutableStateOf(Main.meteorConfig.isLightTheme.get<Boolean>()!!)
-val uiColor = mutableStateOf(Color((Main.meteorConfig.uiColor.get<java.awt.Color>()!!).rgb))
-val secondColor = mutableStateOf(Color((Main.meteorConfig.uiAccentColor.get<java.awt.Color>()!!).rgb))
+val pluginListSize = mutableStateOf(Main.meteorConfig.pluginListTextSize.get()!!)
+val pluginSpacer = mutableStateOf(Main.meteorConfig.pluginListSpacer.get()!!)
+val darkLightMode = mutableStateOf(Main.meteorConfig.isLightTheme.get()!!)
+val uiColor = mutableStateOf(Color((Main.meteorConfig.uiColor.get()!!).rgb))
+val secondColor = mutableStateOf(Color((Main.meteorConfig.uiAccentColor.get()!!).rgb))
 val surface: Color
     get() = if (darkLightMode.value) Color(0xFF212121)
     else Color(0xFFf3f5f7)

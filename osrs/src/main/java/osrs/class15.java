@@ -25,13 +25,6 @@ public class class15 extends SSLSocketFactory {
    @ObfuscatedName("aj")
    SecureRandom field45 = new SecureRandom();
 
-   static {
-/*      if (Security.getProvider("BC") == null) {
-         //Security.addProvider(new BouncyCastleProvider());
-      }*/
-
-   }
-
    @ObfuscatedName("aj")
    @ObfuscatedSignature(
       descriptor = "(Ljava/lang/String;Lorg/bouncycastle/crypto/tls/TlsClientProtocol;B)Ljavax/net/ssl/SSLSocket;",

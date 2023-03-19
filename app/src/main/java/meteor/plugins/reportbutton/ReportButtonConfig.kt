@@ -31,7 +31,7 @@ import meteor.config.legacy.ConfigItem
 
 class ReportButtonConfig : Config("reportButton") {
 
-    val time: Any = meteor.config.ConfigItem(
+    val time = meteor.config.ConfigItem<TimeStyle>(
             group = group,
             keyName = "time",
             name = "Display Options",
@@ -39,7 +39,7 @@ class ReportButtonConfig : Config("reportButton") {
             defaultValue = TimeStyle.LOGIN_TIME
     )
 
-    val switchTimeFormat: Any = meteor.config.ConfigItem(
+    val switchTimeFormat = meteor.config.ConfigItem(
             group = group,
             keyName = "switchTimeFormat",
             name = "Time Format",

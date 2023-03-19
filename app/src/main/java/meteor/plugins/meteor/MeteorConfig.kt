@@ -29,7 +29,7 @@ open class MeteorConfig() : Config(Configuration.MASTER_GROUP) {
             keyName = "infoBoxTextOutline",
             name = "Outline infobox text",
             description = "Draw a full outline instead of a simple shadow for infobox text",
-            defaultValue = 43
+            defaultValue = true
     )
 
     val overlayBackgroundColor = ConfigItem(
