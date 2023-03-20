@@ -86,11 +86,11 @@ public class ChatChannel {
       descriptor = "(B)V",
       garbageValue = "-6"
    )
-   static void method445() {
+   static void initRandomDat() {
       try {
          File var0 = new File(class16.userHomeDirectory, "random.dat");
          int var2;
-         if (var0.exists()) {
+/*         if (var0.exists()) {
             JagexCache.JagexCache_randomDat = new BufferedFile(new AccessFile(var0, "rw", 25L), 24, 0);
          } else {
             label38:
@@ -103,7 +103,7 @@ public class ChatChannel {
                   }
                }
             }
-         }
+         }*/
 
          if (JagexCache.JagexCache_randomDat == null) {
             RandomAccessFile var4 = new RandomAccessFile(var0, "rw");

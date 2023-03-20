@@ -7,6 +7,8 @@ import android.graphics.Bitmap
 import android.graphics.Color.BLACK
 import android.graphics.Insets
 import android.os.Bundle
+import android.os.StrictMode
+import android.os.StrictMode.ThreadPolicy
 import android.text.InputType
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -51,6 +53,7 @@ import meteor.ui.overlay.OverlayRenderer
 import meteor.ui.overlay.TooltipManager
 import meteor.util.ExecutorServiceExceptionLogger
 import net.runelite.api.GameState
+import okhttp3.OkHttpClient
 import osrs.*
 import java.awt.Point
 import java.awt.image.BufferedImage
@@ -70,6 +73,7 @@ class Main : AppCompatActivity() {
         lateinit var overlayRenderer: OverlayRenderer
         val executor = ExecutorServiceExceptionLogger(Executors.newSingleThreadScheduledExecutor())
         val scheduler = Scheduler()
+        val httpClient = OkHttpClient()
         var INSTANCE : Main? = null
     }
 
@@ -183,6 +187,8 @@ class Main : AppCompatActivity() {
         overlayView = findViewById(R.id.overlayView)
         overlayView!!.setContent { overlayContent() }
         if (!startedOSRS) {
+            val policy = ThreadPolicy.Builder().permitAll().build()
+            StrictMode.setThreadPolicy(policy)
             initDisplay()
             startOSRS()
             initManagers()

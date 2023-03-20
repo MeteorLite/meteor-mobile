@@ -70,11 +70,13 @@ dependencies {
     implementation(project(":annotations"))
     implementation(project(":awt"))
     implementation(project(":eventbus"))
+    implementation(project(":http"))
     implementation(project(":logger"))
     runtimeOnly(project(":scripts"))
     implementation(files("./libs/injected-client.jar"))
     implementation("androidx.compose.material3:material3:1.1.0-alpha08")
 
+    implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "5.0.0-alpha.11")
     implementation("org.bouncycastle:bcpkix-jdk15to18:1.64")
     implementation("org.bouncycastle:bcprov-jdk15to18:1.64")
     implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.12.0")

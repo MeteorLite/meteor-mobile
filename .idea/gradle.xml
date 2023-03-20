@@ -20,6 +20,7 @@
             <option value="$PROJECT_DIR$/cache" />
             <option value="$PROJECT_DIR$/deobfuscator" />
             <option value="$PROJECT_DIR$/eventbus" />
+            <option value="$PROJECT_DIR$/http" />
             <option value="$PROJECT_DIR$/injector" />
             <option value="$PROJECT_DIR$/logger" />
             <option value="$PROJECT_DIR$/mixins" />

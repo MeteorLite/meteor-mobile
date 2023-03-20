@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Cameron <https://github.com/noremac201>
+ * Copyright (c) 2020 Abex
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,25 +22,55 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package meteor.plugins.reportbutton
+package net.runelite.http.api.gson;
 
-import meteor.config.Config
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
+import java.io.IOException;
+import java.time.Instant;
 
-class ReportButtonConfig : Config("reportButton") {
+// Just add water!
+public class InstantTypeAdapter extends TypeAdapter<Instant> {
 
-    val time = meteor.config.ConfigItem(
-            group = group,
-            keyName = "time",
-            name = "Display Options",
-            description = "Configures what text the report button shows.",
-            defaultValue = TimeStyle.LOGIN_TIME
-    )
+  @Override
+  public void write(JsonWriter out, Instant value) throws IOException {
+    if (value == null) {
+      out.nullValue();
+      return;
+    }
 
-    val switchTimeFormat = meteor.config.ConfigItem(
-            group = group,
-            keyName = "switchTimeFormat",
-            name = "Time Format",
-            description = "Configures time between 12 or 24 hour time format",
-            defaultValue = TimeFormat.TIME_12H
-    )
+    out.value(value.toEpochMilli());
+  }
+
+  @Override
+  public Instant read(JsonReader in) throws IOException {
+    if (in.peek() == JsonToken.NULL) {
+      in.nextNull();
+      return null;
+    }
+
+    if (in.peek() == JsonToken.NUMBER) {
+      long jsTime = in.nextLong();
+      return Instant.ofEpochMilli(jsTime);
+    }
+
+    long seconds = 0;
+    int nanos = 0;
+    in.beginObject();
+    while (in.peek() != JsonToken.END_OBJECT) {
+      switch (in.nextName()) {
+        case "nanos":
+          nanos = in.nextInt();
+          break;
+        case "seconds":
+          seconds = in.nextLong();
+          break;
+      }
+    }
+    in.endObject();
+
+    return Instant.ofEpochSecond(seconds, nanos);
+  }
 }

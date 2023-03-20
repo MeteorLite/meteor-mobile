@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Cameron <https://github.com/noremac201>
+ * Copyright (c) 2018, Tomas Slusny <slusnucky@gmail.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,25 +22,36 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package meteor.plugins.reportbutton
+package net.runelite.http.api.item;
 
-import meteor.config.Config
+import com.google.gson.annotations.SerializedName;
+import lombok.Builder;
+import lombok.Value;
 
-class ReportButtonConfig : Config("reportButton") {
+@Value
+@Builder
+public class ItemEquipmentStats {
 
-    val time = meteor.config.ConfigItem(
-            group = group,
-            keyName = "time",
-            name = "Display Options",
-            description = "Configures what text the report button shows.",
-            defaultValue = TimeStyle.LOGIN_TIME
-    )
+  private int slot;
 
-    val switchTimeFormat = meteor.config.ConfigItem(
-            group = group,
-            keyName = "switchTimeFormat",
-            name = "Time Format",
-            description = "Configures time between 12 or 24 hour time format",
-            defaultValue = TimeFormat.TIME_12H
-    )
+  @SerializedName("is2h")
+  private boolean isTwoHanded;
+
+  private int astab;
+  private int aslash;
+  private int acrush;
+  private int amagic;
+  private int arange;
+
+  private int dstab;
+  private int dslash;
+  private int dcrush;
+  private int dmagic;
+  private int drange;
+
+  private int str;
+  private int rstr;
+  private int mdmg;
+  private int prayer;
+  private int aspeed;
 }

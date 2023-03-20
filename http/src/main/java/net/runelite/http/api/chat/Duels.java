@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Cameron <https://github.com/noremac201>
+ * Copyright (c) 2019, Adam <Adam@sigterm.info>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,25 +22,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package meteor.plugins.reportbutton
+package net.runelite.http.api.chat;
 
-import meteor.config.Config
+import lombok.Data;
 
-class ReportButtonConfig : Config("reportButton") {
-
-    val time = meteor.config.ConfigItem(
-            group = group,
-            keyName = "time",
-            name = "Display Options",
-            description = "Configures what text the report button shows.",
-            defaultValue = TimeStyle.LOGIN_TIME
-    )
-
-    val switchTimeFormat = meteor.config.ConfigItem(
-            group = group,
-            keyName = "switchTimeFormat",
-            name = "Time Format",
-            description = "Configures time between 12 or 24 hour time format",
-            defaultValue = TimeFormat.TIME_12H
-    )
+@Data
+public class Duels
+{
+	private int wins;
+	private int losses;
+	private int winningStreak;
+	private int losingStreak;
 }
