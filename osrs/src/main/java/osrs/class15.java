@@ -25,11 +25,11 @@ public class class15 extends SSLSocketFactory {
    @ObfuscatedName("aj")
    SecureRandom field45 = new SecureRandom();
 
-   static {
-/*      if (Security.getProvider("BC") == null) {
-         //Security.addProvider(new BouncyCastleProvider());
-      }*/
 
+   static {
+      if (Security.getProvider("BC") == null) {
+         Security.addProvider(new BouncyCastleProvider());
+      }
    }
 
    @ObfuscatedName("aj")

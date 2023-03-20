@@ -14,11 +14,11 @@ public class class110 extends UrlRequester {
    @Export("cameraYaw")
    static int cameraYaw;
    @ObfuscatedName("an")
-   final boolean field1138;
+   final boolean bouncyCastleDisabled;
 
    public class110(boolean var1, int var2) {
       super(var2);
-      this.field1138 = var1;
+      this.bouncyCastleDisabled = var1;
    }
 
    @ObfuscatedName("aj")
@@ -109,7 +109,7 @@ public class class110 extends UrlRequester {
    )
    URLConnection method635(UrlRequest var1) throws IOException {
       HttpsURLConnection var2 = (HttpsURLConnection)var1.field1142.openConnection();
-      if (!this.field1138) {
+      if (!this.bouncyCastleDisabled) {
          if (class15.field44 == null) {
             class15.field44 = new class15();
          }

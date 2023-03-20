@@ -81,8 +81,8 @@ class InfoBoxOverlay internal constructor(
         // to the last infobox prior to wrapping too.
         panelComponent.setPreferredSize(
             Dimension(
-                DEFAULT_WRAP_COUNT * (config.infoBoxSize.get<Int>()!! + GAP),
-                DEFAULT_WRAP_COUNT * (config.infoBoxSize.get<Int>()!! + GAP)
+                DEFAULT_WRAP_COUNT * (config.infoBoxSize.get()!! + GAP),
+                DEFAULT_WRAP_COUNT * (config.infoBoxSize.get()!! + GAP)
             )
         )
         panelComponent.orientation = (orientation)
@@ -97,11 +97,11 @@ class InfoBoxOverlay internal constructor(
             if (color != null) {
                 infoBoxComponent.color = (color)
             }
-            infoBoxComponent.outline = (config.infoBoxTextOutline.get<Boolean>()!!)
+            infoBoxComponent.outline = (config.infoBoxTextOutline.get()!!)
             infoBoxComponent.image = (box.scaledImage)
             infoBoxComponent.tooltip = (box.tooltip)
-            infoBoxComponent.setPreferredSize(Dimension(config.infoBoxSize.get<Int>()!!, config.infoBoxSize.get<Int>()!!))
-            infoBoxComponent.backgroundColor = (config.overlayBackgroundColor.get<Color>()!!)
+            infoBoxComponent.setPreferredSize(Dimension(config.infoBoxSize.get()!!, config.infoBoxSize.get()!!))
+            infoBoxComponent.backgroundColor = (config.overlayBackgroundColor.get()!!)
             infoBoxComponent.infoBox = (box)
             panelComponent.children.add(infoBoxComponent)
         }

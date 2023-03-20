@@ -86,11 +86,11 @@ class ReportButtonPlugin : Plugin() {
     }
 
     override fun onGameTick(it: GameTick) {
-        if (config.time == TimeStyle.LOGIN_TIME){
+        if (config.time.get() == TimeStyle.LOGIN_TIME){
             ticksSinceLogin++
         }
         updateReportButtonTime()
-        if (config.time == TimeStyle.GAME_TICKS) {
+        if (config.time.get() == TimeStyle.GAME_TICKS) {
             ticksSinceLogin++
         }
     }
@@ -113,7 +113,7 @@ class ReportButtonPlugin : Plugin() {
         }
         val reportButton = client.getWidget(WidgetInfo.CHATBOX_REPORT_TEXT) ?: return
         reportButton.text = getLoginTime()
-        when (config.time) {
+        when (config.time.get()) {
             TimeStyle.UTC -> reportButton.text = uTCTime
             TimeStyle.JAGEX -> reportButton.text = jagexTime
             TimeStyle.LOCAL_TIME -> reportButton.text = localTime
@@ -157,7 +157,7 @@ class ReportButtonPlugin : Plugin() {
         }
 
     private fun updateTimeFormat() {
-        timeFormat = if (config.switchTimeFormat == TimeFormat.TIME_24H) {
+        timeFormat = if (config.switchTimeFormat.get() == TimeFormat.TIME_24H) {
             DateTimeFormatter.ofPattern("HH:mm:ss")
         } else {
             DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM)
