@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Cameron <https://github.com/noremac201>
+ * Copyright (c) 2018, Adam <Adam@sigterm.info>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,25 +22,56 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package meteor.plugins.reportbutton
+package net.runelite.http.api.xp;
 
-import meteor.config.Config
+import java.io.IOException;
 
-class ReportButtonConfig : Config("reportButton") {
+import net.runelite.http.api.RuneLiteAPI;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import meteor.Logger;
 
-    val time = meteor.config.ConfigItem(
-            group = group,
-            keyName = "time",
-            name = "Display Options",
-            description = "Configures what text the report button shows.",
-            defaultValue = TimeStyle.LOGIN_TIME
-    )
+public class XpClient
+{
+	private final OkHttpClient client;
 
-    val switchTimeFormat = meteor.config.ConfigItem(
-            group = group,
-            keyName = "switchTimeFormat",
-            name = "Time Format",
-            description = "Configures time between 12 or 24 hour time format",
-            defaultValue = TimeFormat.TIME_12H
-    )
+	private Logger log = Logger.Companion.getLogger(XpClient.class);
+
+	public XpClient(OkHttpClient client)
+	{
+		this.client = client;
+	}
+
+	public void update(String username)
+	{
+		HttpUrl url = RuneLiteAPI.getApiBase().newBuilder()
+			.addPathSegment("xp")
+			.addPathSegment("update")
+			.addQueryParameter("username", username)
+			.build();
+
+		Request request = new Request.Builder()
+			.url(url)
+			.build();
+
+		client.newCall(request).enqueue(new Callback()
+		{
+			@Override
+			public void onFailure(Call call, IOException e)
+			{
+				log.warn("Error submitting xp track", e);
+			}
+
+			@Override
+			public void onResponse(Call call, Response response)
+			{
+				response.close();
+				log.debug("Submitted xp track for {}", username);
+			}
+		});
+	}
 }

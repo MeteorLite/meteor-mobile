@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Cameron <https://github.com/noremac201>
+ * Copyright (c) 2019, Adam <Adam@sigterm.info>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,25 +22,29 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package meteor.plugins.reportbutton
+package net.runelite.http.api.chat;
 
-import meteor.config.Config
+public enum LayoutRoom
+{
+	START,
+	END,
+	SCAVENGERS,
+	FARMING,
+	EMPTY,
 
-class ReportButtonConfig : Config("reportButton") {
+	TEKTON,
+	MUTTADILES,
+	GUARDIANS,
+	VESPULA,
+	SHAMANS,
+	VASA,
+	VANGUARDS,
+	MYSTICS,
+	UNKNOWN_COMBAT,
 
-    val time = meteor.config.ConfigItem(
-            group = group,
-            keyName = "time",
-            name = "Display Options",
-            description = "Configures what text the report button shows.",
-            defaultValue = TimeStyle.LOGIN_TIME
-    )
-
-    val switchTimeFormat = meteor.config.ConfigItem(
-            group = group,
-            keyName = "switchTimeFormat",
-            name = "Time Format",
-            description = "Configures time between 12 or 24 hour time format",
-            defaultValue = TimeFormat.TIME_12H
-    )
+	CRABS,
+	ICE_DEMON,
+	TIGHTROPE,
+	THIEVING,
+	UNKNOWN_PUZZLE;
 }

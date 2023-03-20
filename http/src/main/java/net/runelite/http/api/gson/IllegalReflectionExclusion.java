@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Cameron <https://github.com/noremac201>
+ * Copyright (c) 2020 Abex
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,25 +22,44 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package meteor.plugins.reportbutton
+package net.runelite.http.api.gson;
 
-import meteor.config.Config
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
+import java.lang.reflect.Modifier;
+import java.util.HashSet;
+import java.util.Set;
 
-class ReportButtonConfig : Config("reportButton") {
+public class IllegalReflectionExclusion implements ExclusionStrategy {
 
-    val time = meteor.config.ConfigItem(
-            group = group,
-            keyName = "time",
-            name = "Display Options",
-            description = "Configures what text the report button shows.",
-            defaultValue = TimeStyle.LOGIN_TIME
-    )
+  private static final Set<ClassLoader> PRIVATE_CLASSLOADERS = new HashSet<>();
 
-    val switchTimeFormat = meteor.config.ConfigItem(
-            group = group,
-            keyName = "switchTimeFormat",
-            name = "Time Format",
-            description = "Configures time between 12 or 24 hour time format",
-            defaultValue = TimeFormat.TIME_12H
-    )
+  static {
+    for (ClassLoader cl = ClassLoader.getSystemClassLoader(); cl != null; ) {
+      cl = cl.getParent();
+      PRIVATE_CLASSLOADERS.add(cl);
+    }
+  }
+
+  @Override
+  public boolean shouldSkipField(FieldAttributes f) {
+    if (!PRIVATE_CLASSLOADERS.contains(f.getDeclaringClass().getClassLoader())) {
+      return false;
+    }
+
+    assert !Modifier.isPrivate(f.getDeclaringClass().getModifiers()) :
+        "gsoning private class " + f.getDeclaringClass().getName();
+    try {
+      f.getDeclaringClass().getField(f.getName());
+    } catch (NoSuchFieldException e) {
+      throw new AssertionError(
+          "gsoning private field " + f.getDeclaringClass() + "." + f.getName());
+    }
+    return false;
+  }
+
+  @Override
+  public boolean shouldSkipClass(Class<?> clazz) {
+    return false;
+  }
 }

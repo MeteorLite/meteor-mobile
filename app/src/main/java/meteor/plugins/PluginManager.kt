@@ -6,13 +6,9 @@ import meteor.config.ConfigManager
 import meteor.plugins.agility.AgilityPlugin
 import meteor.plugins.autologin.AutoLoginPlugin
 import meteor.plugins.neverlog.NeverLogoutPlugin
+import meteor.plugins.onetapagility.OneTapAgilityPlugin
 import meteor.plugins.reportbutton.ReportButtonPlugin
-import meteor.task.Schedule
-import meteor.task.ScheduledMethod
 import java.io.File
-import java.lang.invoke.CallSite
-import java.lang.invoke.MethodHandles
-import java.lang.invoke.MethodType
 import java.net.URLClassLoader
 import java.util.jar.Manifest
 import kotlin.system.exitProcess
@@ -29,6 +25,7 @@ object PluginManager {
             init<AgilityPlugin>()
             init<AutoLoginPlugin>()
             init<NeverLogoutPlugin>()
+            init<OneTapAgilityPlugin>()
             init<ReportButtonPlugin>()
         }
         Main.logger.warn("Loaded ${plugins.size} plugins")

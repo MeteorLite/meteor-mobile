@@ -288,7 +288,7 @@ public enum class87 implements class352 {
       }
 
       class126.method694(SoundCache.cacheDir);
-      ChatChannel.method445();
+      ChatChannel.initRandomDat();
       JagexCache.JagexCache_dat2File = new BufferedFile(new AccessFile(class126.getFile("main_file_cache.dat2"), "rw", 1048576000L), 5200, 0);
       JagexCache.JagexCache_idx255File = new BufferedFile(new AccessFile(class126.getFile("main_file_cache.idx255"), "rw", 1048576L), 6000, 0);
       JagexCache.JagexCache_idxFiles = new BufferedFile[class188.idxCount];

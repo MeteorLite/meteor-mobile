@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Cameron <https://github.com/noremac201>
+ * Copyright (c) 2017, Adam <Adam@sigterm.info>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,25 +22,22 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package meteor.plugins.reportbutton
+package net.runelite.http.api.item;
 
-import meteor.config.Config
+import meteor.Logger;
 
-class ReportButtonConfig : Config("reportButton") {
+public enum ItemType {
+  DEFAULT;
 
-    val time = meteor.config.ConfigItem(
-            group = group,
-            keyName = "time",
-            name = "Display Options",
-            description = "Configures what text the report button shows.",
-            defaultValue = TimeStyle.LOGIN_TIME
-    )
+  private static final Logger logger = Logger.Companion.getLogger(ItemType.class);
 
-    val switchTimeFormat = meteor.config.ConfigItem(
-            group = group,
-            keyName = "switchTimeFormat",
-            name = "Time Format",
-            description = "Configures time between 12 or 24 hour time format",
-            defaultValue = TimeFormat.TIME_12H
-    )
+  public static ItemType of(String type) {
+    try {
+      return ItemType.valueOf(type.toUpperCase());
+    } catch (IllegalArgumentException ex) {
+      logger.warn("unable to convert type");
+      ex.printStackTrace();
+      return DEFAULT;
+    }
+  }
 }
