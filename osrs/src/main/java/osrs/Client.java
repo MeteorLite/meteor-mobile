@@ -4914,6 +4914,7 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi {
             }
 
             if (ServerPacket.REFLECTION_CHECK == var1.serverPacket) {
+               System.out.println("Refl check");
                class154.readReflectionCheck(var3, var1.serverPacketLength);
                var1.serverPacket = null;
                return true;
