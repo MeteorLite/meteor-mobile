@@ -25,15 +25,20 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.jaredrummler.android.device.DeviceName
 import eventbus.Events
@@ -48,9 +53,11 @@ import meteor.eventbus.KEventBus
 import meteor.plugins.PluginManager
 import meteor.plugins.meteor.MeteorConfig
 import meteor.task.Scheduler
+import meteor.ui.composables.toolbar.ToolbarPanel
 import meteor.ui.overlay.OverlayManager
 import meteor.ui.overlay.OverlayRenderer
 import meteor.ui.overlay.TooltipManager
+import meteor.ui.preferences.pluginsOpen
 import meteor.util.ExecutorServiceExceptionLogger
 import net.runelite.api.GameState
 import okhttp3.OkHttpClient
@@ -167,11 +174,18 @@ class Main : AppCompatActivity() {
             return
         }
         if (overlayVisible.value)
-            Box(modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.DarkGray.copy(alpha = .6f))) {
-                pluginsPanel()
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                Box(modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.DarkGray.copy(alpha = .6f))) {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        ToolbarPanel()
+                        if (pluginsOpen.value) pluginsPanel()
+                    }
+
+                }
             }
+
     }
 
     //Prevent back from closing

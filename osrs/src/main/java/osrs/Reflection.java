@@ -19,6 +19,7 @@ public class Reflection {
 	public static void reportInvoke(Method method, Object object, Object[] args) {}
 
 	public static Class<?> findClass(String name) throws ClassNotFoundException {
+		System.out.println("Looking for class " + name);
 		for (Map.Entry<String, String> pair : ObfuscatedClassMap.INSTANCE.entrySet()) {
 			if (pair.getValue().equals(name)) {
 				try {

@@ -2,8 +2,12 @@ package meteor.ui.preferences
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
+import compose.icons.LineAwesomeIcons
+import compose.icons.lineawesomeicons.PlugSolid
 import meteor.Main
 import meteor.plugins.Plugin
+import meteor.ui.composables.toolbar.ToolbarButton
+import meteor.ui.composables.toolbar.addButton
 
 
 var pluginsOpen = mutableStateOf(false)
@@ -91,7 +95,6 @@ fun setOpenValues(openValue: Boolean) {
 
 
 
-/*
 val pluginListButton = addButton(
     ToolbarButton(
         "Plugins",
@@ -112,4 +115,4 @@ val pluginListButton = addButton(
             setOpenValues(!pluginsOpen.value)
         },
         position = 0)
-)*/
+)

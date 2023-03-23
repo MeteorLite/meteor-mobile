@@ -1,6 +1,8 @@
 package meteor
 
 import android.annotation.SuppressLint
+import android.graphics.Color.HSVToColor
+import android.graphics.Color.colorToHSV
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -26,6 +28,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -51,7 +55,9 @@ fun pluginsPanel() {
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Top,
-            modifier = Modifier.fillMaxHeight().width(300.dp)
+            modifier = Modifier
+                    .fillMaxHeight()
+                    .width(300.dp)
         ) {
             plugins()
         }
@@ -86,109 +92,120 @@ fun updatePluginsList() {
 @Composable
 fun plugins() {
     val pluginListScrollState = rememberForeverLazyListState()
-
-    Row(
-        modifier = Modifier.fillMaxWidth().height(60.dp), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically
-    ) {
-        OutlinedTextField(
-            value = searchText.value,
-            onValueChange = { value ->
-                searchText.value = value
-            },
-            singleLine = true,
-            textStyle = TextStyle(
-                color = uiColor.value,
-                letterSpacing = 4.sp,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Medium
-            ),
-            colors = TextFieldDefaults.outlinedTextFieldColors(focusedBorderColor = uiColor.value, unfocusedBorderColor = uiColor.value, cursorColor = uiColor.value),
-            modifier = Modifier.fillMaxWidth().height(60.dp).scale(0.93f),
-            shape = RoundedCornerShape(10.dp),
-            label = {
-                if (searchText.value.isEmpty()) Text("Search", color = uiColor.value)
-            },
-            leadingIcon = {
-                Icon(
-                    Octicons.Search16,
-                    contentDescription = "Opens Plugin configuration panel",
-                    tint = uiColor.value,
-                )
-            }
-        )
-    }
-    Spacer(Modifier.width(75.dp))
-
-
-    Column(
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Top,
-        modifier = Modifier.fillMaxWidth()
-            .fillMaxHeight()
-    ) {
-
-        LazyColumn(modifier = Modifier.fillMaxHeight(), state = pluginListScrollState) {
-
-            val searchedText = searchText.value
-            val plugins = ArrayList<Plugin>()
-            plugins.addAll(favoritePlugins.value.filter {
-                it.getName()!!.contains(searchedText, ignoreCase = true) ||
-                        it.getDescriptor()!!.tags.contains(searchedText)
-            })
-            plugins.addAll(nonFavoritePlugins.value.filter {
-                it.getName()!!.contains(searchedText, ignoreCase = true) ||
-                        it.getDescriptor()!!.tags.contains(searchedText)
-            })
-
-            items(items = plugins, itemContent = { plugin ->
-                Row(modifier = Modifier.fillMaxWidth().height(45.dp).background(background)) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start,
-                        modifier = Modifier.fillMaxWidth(0.50f).height(32.dp).background(background)
-                    ) {
-                        IconButton(
-                            onClick = {
-                                plugin.setFavorite(!plugin.isFavorite())
-                                updatePluginsList()
-                            },
-                        ) {
-                            if (plugin.isFavorite()) {
-                                Spacer(Modifier.height(20.dp))
-                                Icon(
-                                    Icons.Filled.Favorite,
-                                    contentDescription = "Favorite",
-                                    tint = uiColor.value,
-                                    modifier = Modifier.width(20.dp)
-                                )
-                            } else {
-                                Spacer(Modifier.height(20.dp))
-                                Icon(
-                                    Icons.Filled.FavoriteBorder,
-                                    contentDescription = "Favorite",
-                                    tint = uiColor.value,
-                                    modifier = Modifier.width(20.dp)
-                                )
-                            }
-                        }
-                        Text(
-                                plugin.javaClass.getDeclaredAnnotation(PluginDescriptor::class.java).name,
-                                style = TextStyle(
-                                        color = uiColor.value,
-                                        letterSpacing = 2.sp,
-                                        fontSize = pluginListSize.value.sp,
-                                        fontWeight = FontWeight.Medium
-                                ),
-                                modifier = Modifier.fillMaxWidth()
+        Row(
+                modifier = Modifier
+                        .fillMaxWidth()
+                        .background(background)
+                        .height(60.dp), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedTextField(
+                    value = searchText.value,
+                    onValueChange = { value ->
+                        searchText.value = value
+                    },
+                    singleLine = true,
+                    textStyle = TextStyle(
+                            color = uiColor.value,
+                            letterSpacing = 4.sp,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Medium
+                    ),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(focusedBorderColor = uiColor.value, unfocusedBorderColor = uiColor.value, cursorColor = uiColor.value),
+                    modifier = Modifier
+                            .fillMaxWidth()
+                            .height(60.dp)
+                            .scale(0.93f),
+                    shape = RoundedCornerShape(10.dp),
+                    label = {
+                        if (searchText.value.isEmpty()) Text("Search", color = uiColor.value)
+                    },
+                    leadingIcon = {
+                        Icon(
+                                Octicons.Search16,
+                                contentDescription = "Opens Plugin configuration panel",
+                                tint = uiColor.value,
                         )
                     }
+            )
+        }
+    Box(Modifier.background(background).fillMaxSize()) {
+        Column(
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Top,
+                modifier = Modifier
+                        .fillMaxSize()
+        ) {
+            Spacer(Modifier
+                    .height(6.dp))
+            LazyColumn(modifier = Modifier.fillMaxSize(), state = pluginListScrollState) {
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.End,
-                        modifier = Modifier.fillMaxWidth()
-                            .height(32.dp)
-                            .background(background)
-                    ) {
+                val searchedText = searchText.value
+                val plugins = ArrayList<Plugin>()
+                plugins.addAll(favoritePlugins.value.filter {
+                    it.getName()!!.contains(searchedText, ignoreCase = true) ||
+                            it.getDescriptor()!!.tags.contains(searchedText)
+                })
+                plugins.addAll(nonFavoritePlugins.value.filter {
+                    it.getName()!!.contains(searchedText, ignoreCase = true) ||
+                            it.getDescriptor()!!.tags.contains(searchedText)
+                })
+
+                items(items = plugins, itemContent = { plugin ->
+                    Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .height(45.dp)
+                            .background(background)) {
+                        Row(
+                                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start,
+                                modifier = Modifier
+                                        .fillMaxWidth(0.50f)
+                                        .height(32.dp)
+                                        .background(background)
+                        ) {
+                            IconButton(
+                                    onClick = {
+                                        plugin.setFavorite(!plugin.isFavorite())
+                                        updatePluginsList()
+                                    },
+                            ) {
+                                if (plugin.isFavorite()) {
+                                    Spacer(Modifier.height(20.dp))
+                                    Icon(
+                                            Icons.Filled.Favorite,
+                                            contentDescription = "Favorite",
+                                            tint = uiColor.value,
+                                            modifier = Modifier.width(20.dp)
+                                    )
+                                } else {
+                                    Spacer(Modifier.height(20.dp))
+                                    Icon(
+                                            Icons.Filled.FavoriteBorder,
+                                            contentDescription = "Favorite",
+                                            tint = uiColor.value,
+                                            modifier = Modifier.width(20.dp)
+                                    )
+                                }
+                            }
+                            Text(
+                                    plugin.javaClass.getDeclaredAnnotation(PluginDescriptor::class.java).name,
+                                    style = TextStyle(
+                                            color = uiColor.value,
+                                            letterSpacing = 2.sp,
+                                            fontSize = pluginListSize.value.sp,
+                                            fontWeight = FontWeight.Medium
+                                    ),
+                                    modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+
+                        Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.End,
+                                modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(32.dp)
+                                        .background(background)
+                        ) {
 /*                        if (plugin.javaClass.getDeclaredAnnotation(PluginDescriptor::class.java).external) {
                             IconButton(
                                 onClick = {
@@ -204,52 +221,59 @@ fun plugins() {
                             }
                         }*/
 
-                        if (plugin.configuration != null) {
-                            IconButton(
-                                onClick = {
-                                    lastPlugin = plugin
-                                    configOpen.value = true
-                                    pluginsOpen.value = false
-                                          },
+                            if (plugin.configuration != null) {
+                                IconButton(
+                                        onClick = {
+                                            lastPlugin = plugin
+                                            configOpen.value = true
+                                            pluginsOpen.value = false
+                                        },
 
-                                ) {
-                                Icon(
-                                    Icons.Outlined.Settings,
-                                    contentDescription = "Opens Plugin configuration panel",
-                                    tint = uiColor.value
+                                        ) {
+                                    Icon(
+                                            Icons.Outlined.Settings,
+                                            contentDescription = "Opens Plugin configuration panel",
+                                            tint = uiColor.value
+                                    )
+                                }
+                            } else {
+                                Spacer(
+                                        Modifier
+                                                .width(50.dp)
+                                                .background(background)
                                 )
                             }
-                        } else {
-                            Spacer(
-                                Modifier.width(50.dp)
-                                    .background(background)
+
+                            //ensure we only care about actual clicks, not recomposition changes
+                            val interactionSource = remember { MutableInteractionSource() }
+                            val isPressed by interactionSource.collectIsPressedAsState()
+
+                            val switchState = mutableStateOf(plugin.shouldEnable())
+                            Switch(
+                                    switchState.value,
+                                    onPluginToggled(switchState, plugin, isPressed),
+                                    enabled = true,
+                                    colors = SwitchDefaults.colors(checkedThumbColor = uiColor.value, checkedTrackColor = uiColor.value.darker(), uncheckedThumbColor = surface, uncheckedTrackColor = background),
+                                    interactionSource = interactionSource
                             )
                         }
-
-                        //ensure we only care about actual clicks, not recomposition changes
-                        val interactionSource = remember { MutableInteractionSource() }
-                        val isPressed by interactionSource.collectIsPressedAsState()
-
-                        val switchState = mutableStateOf(plugin.shouldEnable())
-                        Switch(
-                            switchState.value,
-                            onPluginToggled(switchState, plugin, isPressed),
-                            enabled = true,
-                            colors = SwitchDefaults.colors(checkedThumbColor = uiColor.value, uncheckedThumbColor = surface),
-                            interactionSource = interactionSource
-                        )
                     }
-
-                }
-                Spacer(
-                    Modifier.width(pluginSpacer.value.dp)
-                        .background(background)
-                )
-            })
+                    Spacer(
+                            Modifier
+                                    .width(pluginSpacer.value.dp)
+                                    .background(background)
+                    )
+                })
+            }
         }
     }
 }
-
+fun Color.darker() : Color{
+    val hsv = FloatArray(3)
+    colorToHSV(toArgb(), hsv)
+    hsv[2] *= 0.5f
+    return Color(HSVToColor(hsv))
+}
 
 private var scrollStateRemembered = ScrollState(0,0)
 

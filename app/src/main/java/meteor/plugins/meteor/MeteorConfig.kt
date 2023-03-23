@@ -4,6 +4,7 @@ package meteor.plugins.meteor
 import meteor.Configuration
 import meteor.config.Config
 import meteor.config.ConfigItem
+import meteor.config.legacy.Range
 import meteor.ui.components.ComponentConstants
 import java.awt.Color
 
@@ -78,5 +79,15 @@ open class MeteorConfig() : Config(Configuration.MASTER_GROUP) {
             keyName = "Plugin list Text Size",
             description = "Slide this to change the plugin list text size",
             defaultValue = 14
+    )
+
+    val toolbarWidth = ConfigItem(
+            group = group,
+            name = "toolbar width",
+            keyName = "toolbar width",
+            description = "",
+            defaultValue = 45,
+            min = 35,
+            max = 100
     )
 }
