@@ -1,4 +1,4 @@
-package meteor
+package meteor.ui
 
 import android.annotation.SuppressLint
 import android.graphics.Color.HSVToColor
@@ -36,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
 import compose.icons.Octicons
 import compose.icons.octicons.Search16
+import meteor.Configuration
 import meteor.config.ConfigManager
 import meteor.plugins.Plugin
 import meteor.plugins.PluginDescriptor
@@ -54,10 +55,10 @@ import meteor.ui.preferences.uiColor
 fun pluginsPanel() {
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Top,
-            modifier = Modifier
-                    .fillMaxHeight()
-                    .width(300.dp)
+                horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Top,
+                modifier = Modifier
+                        .fillMaxHeight()
+                        .width(300.dp)
         ) {
             plugins()
         }
@@ -92,42 +93,42 @@ fun updatePluginsList() {
 @Composable
 fun plugins() {
     val pluginListScrollState = rememberForeverLazyListState()
-        Row(
+    Row(
+            modifier = Modifier
+                    .fillMaxWidth()
+                    .background(background)
+                    .height(60.dp), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically
+    ) {
+        OutlinedTextField(
+                value = searchText.value,
+                onValueChange = { value ->
+                    searchText.value = value
+                },
+                singleLine = true,
+                textStyle = TextStyle(
+                        color = uiColor.value,
+                        letterSpacing = 4.sp,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Medium
+                ),
+                colors = TextFieldDefaults.outlinedTextFieldColors(focusedBorderColor = uiColor.value, unfocusedBorderColor = uiColor.value, cursorColor = uiColor.value),
                 modifier = Modifier
                         .fillMaxWidth()
-                        .background(background)
-                        .height(60.dp), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically
-        ) {
-            OutlinedTextField(
-                    value = searchText.value,
-                    onValueChange = { value ->
-                        searchText.value = value
-                    },
-                    singleLine = true,
-                    textStyle = TextStyle(
-                            color = uiColor.value,
-                            letterSpacing = 4.sp,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Medium
-                    ),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(focusedBorderColor = uiColor.value, unfocusedBorderColor = uiColor.value, cursorColor = uiColor.value),
-                    modifier = Modifier
-                            .fillMaxWidth()
-                            .height(60.dp)
-                            .scale(0.93f),
-                    shape = RoundedCornerShape(10.dp),
-                    label = {
-                        if (searchText.value.isEmpty()) Text("Search", color = uiColor.value)
-                    },
-                    leadingIcon = {
-                        Icon(
-                                Octicons.Search16,
-                                contentDescription = "Opens Plugin configuration panel",
-                                tint = uiColor.value,
-                        )
-                    }
-            )
-        }
+                        .height(60.dp)
+                        .scale(0.93f),
+                shape = RoundedCornerShape(10.dp),
+                label = {
+                    if (searchText.value.isEmpty()) Text("Search", color = uiColor.value)
+                },
+                leadingIcon = {
+                    Icon(
+                            Octicons.Search16,
+                            contentDescription = "Opens Plugin configuration panel",
+                            tint = uiColor.value,
+                    )
+                }
+        )
+    }
     Box(Modifier.background(background).fillMaxSize()) {
         Column(
                 horizontalAlignment = Alignment.Start,
@@ -158,7 +159,7 @@ fun plugins() {
                         Row(
                                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start,
                                 modifier = Modifier
-                                        .fillMaxWidth(0.50f)
+                                        .fillMaxWidth(0.60f)
                                         .height(32.dp)
                                         .background(background)
                         ) {
@@ -225,6 +226,7 @@ fun plugins() {
                                 IconButton(
                                         onClick = {
                                             lastPlugin = plugin
+                                            currentConfigView.value = plugin.configuration!!
                                             configOpen.value = true
                                             pluginsOpen.value = false
                                         },
@@ -278,8 +280,8 @@ fun Color.darker() : Color{
 private var scrollStateRemembered = ScrollState(0,0)
 
 private data class ScrollState(
-    val index: Int,
-    val scrollOffset: Int
+        val index: Int,
+        val scrollOffset: Int
 )
 
 @Composable
@@ -289,8 +291,8 @@ fun rememberForeverLazyListState(): LazyListState {
         val savedIndex = savedValue.index
         val savedOffset = savedValue.scrollOffset
         LazyListState(
-            savedIndex,
-            savedOffset
+                savedIndex,
+                savedOffset
         )
     }
     DisposableEffect(Unit) {

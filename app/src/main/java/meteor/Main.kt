@@ -25,10 +25,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
@@ -40,8 +42,10 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.google.gson.Gson
 import com.jaredrummler.android.device.DeviceName
 import eventbus.Events
+import eventbus.events.ConfigChanged
 import eventbus.events.Draw
 import eventbus.events.GameStateChanged
 import eventbus.events.LoadingTextChanged
@@ -52,12 +56,19 @@ import meteor.config.ConfigManager
 import meteor.eventbus.KEventBus
 import meteor.plugins.PluginManager
 import meteor.plugins.meteor.MeteorConfig
+import meteor.plugins.privateserver.PrivateServerConfig
 import meteor.task.Scheduler
 import meteor.ui.composables.toolbar.ToolbarPanel
+import meteor.ui.configPanel
 import meteor.ui.overlay.OverlayManager
 import meteor.ui.overlay.OverlayRenderer
 import meteor.ui.overlay.TooltipManager
+import meteor.ui.overlay.WidgetOverlay
+import meteor.ui.overlay.tooltips.TooltipOverlay
+import meteor.ui.pluginsPanel
+import meteor.ui.preferences.configOpen
 import meteor.ui.preferences.pluginsOpen
+import meteor.ui.preferences.uiColor
 import meteor.util.ExecutorServiceExceptionLogger
 import net.runelite.api.GameState
 import okhttp3.OkHttpClient
@@ -65,6 +76,7 @@ import osrs.*
 import java.awt.Point
 import java.awt.image.BufferedImage
 import java.io.*
+import java.math.BigInteger
 import java.util.concurrent.Executors
 import kotlin.math.abs
 
@@ -76,12 +88,14 @@ class Main : AppCompatActivity() {
         val logger = Logger("Meteor")
         lateinit var overlayManager: OverlayManager
         lateinit var meteorConfig: MeteorConfig
+        lateinit var rspsConfig: PrivateServerConfig
         lateinit var tooltipManager: TooltipManager
         lateinit var overlayRenderer: OverlayRenderer
         val executor = ExecutorServiceExceptionLogger(Executors.newSingleThreadScheduledExecutor())
         val scheduler = Scheduler()
         val httpClient = OkHttpClient()
         var INSTANCE : Main? = null
+        val overlayVisible = mutableStateOf(false)
     }
 
     init {
@@ -102,20 +116,36 @@ class Main : AppCompatActivity() {
     var downStartPosition : Point? = null
     var pendingLeftClick : Point? = null
     var pendingRightClick : Point? = null
+    var pendingMouseRelease = false
     var mouseDown : Long = -1
 
     var shouldRender = false
 
     var splashFinished = mutableStateOf(false)
 
+    fun initOverlays() {
+        //WidgetOverlay.createOverlays().forEach{ overlay: WidgetOverlay -> overlayManager.add(overlay) }
+        overlayManager.add(TooltipOverlay())
+    }
+
     fun initConfigs() {
         // load configs immediately
         ConfigManager.loadSavedProperties()
         ConfigManager.setDefaultConfiguration(MeteorConfig::class.java, false)
+        ConfigManager.setDefaultConfiguration(PrivateServerConfig::class.java, false)
         ConfigManager.saveProperties()
 
         // init meteor config
         meteorConfig = ConfigManager.getConfig(MeteorConfig::class.java)!!
+        rspsConfig = ConfigManager.getConfig(PrivateServerConfig::class.java)!!
+    }
+
+    fun initRSPSConfig() {
+        if (rspsConfig.host.get()!!.isNotEmpty()) {
+            client.setHost(rspsConfig.host.get()!!)
+            if (rspsConfig.modulus.get()!!.isNotEmpty())
+                client.modulus = BigInteger(rspsConfig.modulus.get()!!, 16)
+        }
     }
 
     override fun onStart() {
@@ -134,8 +164,6 @@ class Main : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         updateHideUi()
     }
-
-    private val overlayVisible = mutableStateOf(false)
 
     val primary: Color = Color.Cyan
     val secondary: Color = Color.Cyan
@@ -158,12 +186,22 @@ class Main : AppCompatActivity() {
         }
     }
 
+    val loadingText = mutableStateOf("Starting OSRS")
+
     @Composable
     fun splashContent() {
         BoxWithConstraints(modifier = Modifier
                 .fillMaxSize()
                 .background(background), contentAlignment = Alignment.Center) {
-            brandBadge()
+
+            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                Row {
+                    brandBadge()
+                }
+                Row {
+                    Text(text = loadingText.value, color = Color.Cyan)
+                }
+            }
         }
     }
 
@@ -180,9 +218,9 @@ class Main : AppCompatActivity() {
                         .background(Color.DarkGray.copy(alpha = .6f))) {
                     Row(modifier = Modifier.fillMaxWidth()) {
                         ToolbarPanel()
-                        if (pluginsOpen.value) pluginsPanel()
+                        if (configOpen.value) configPanel()
+                        else if (pluginsOpen.value) pluginsPanel()
                     }
-
                 }
             }
 
@@ -206,6 +244,7 @@ class Main : AppCompatActivity() {
             initDisplay()
             startOSRS()
             initManagers()
+            initOverlays()
             subscribeEvents()
             startedOSRS = true
         }
@@ -216,6 +255,7 @@ class Main : AppCompatActivity() {
 
     fun initManagers() {
         overlayManager = OverlayManager
+        tooltipManager = TooltipManager
         PluginManager
     }
 
@@ -245,7 +285,9 @@ class Main : AppCompatActivity() {
         Client.androidActivity = this
         deobClient!!.init()
         deobClient!!.start()
+
         client = deobClient as net.runelite.api.Client
+        initRSPSConfig()
         overlayRenderer = OverlayRenderer()
         client.callbacks = Hooks()
         var wait = true
@@ -262,9 +304,21 @@ class Main : AppCompatActivity() {
         }
     }
 
+    fun hideSoftKeyboard() {
+        runOnUiThread {
+            window.decorView.hideKeyboard()
+        }
+    }
+
+
     fun View.focusAndShowKeyboard() {
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(this, InputMethodManager.SHOW_FORCED)
+    }
+
+    fun View.hideKeyboard() {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(window.decorView.windowToken, 0)
     }
 
     fun subscribeEvents() {
@@ -272,13 +326,22 @@ class Main : AppCompatActivity() {
             println("new Login state: ${it.data.index}")
         }
         eventBus.subscribe<GameStateChanged>(Events.GAME_STATE_CHANGED) {
+            if (it.data.gameState == GameState.LOGIN_SCREEN)
+                splashFinished.value = true
+            if (it.data.gameState == GameState.LOGGING_IN)
+                hideSoftKeyboard()
             println("new Game state: ${it.data.gameState}")
         }
         eventBus.subscribe<LoginIndexChanged>(Events.LOGIN_INDEX_CHANGED) {
             println("new Login Index: ${it.data.newLoginIndex}")
         }
+        eventBus.subscribe<ConfigChanged>(Events.CONFIG_CHANGED) {
+            if (it.data.group == Configuration.MASTER_GROUP)
+                if (it.data.key == "meteorColor") {
+                    uiColor.value = Color(meteorConfig.uiColor.get()!!.rgb)
+                }
+        }
         eventBus.subscribe<Draw>(Events.DRAW) {
-
             pendingLeftClick?.let {
                 if (client.gameState == GameState.LOGIN_SCREEN_AUTHENTICATOR) {
                     val editText = EditText(this)
@@ -292,10 +355,12 @@ class Main : AppCompatActivity() {
                     return@subscribe
                 }
                 MouseHandler.mousePressed(it, 1)
+                MouseHandler.mouseReleased()
                 pendingLeftClick = null
             }
             pendingRightClick?.let {
                 MouseHandler.mousePressed(it, 2)
+                MouseHandler.mouseReleased()
                 pendingRightClick = null
             }
         }
@@ -305,11 +370,7 @@ class Main : AppCompatActivity() {
             }
         }
         eventBus.subscribe<LoadingTextChanged>(Events.LOADING_TEXT_CHANGED) {
-            if (it.data.newText.contains("Loaded title screen", ignoreCase = true)) {
-                splashFinished.value = true
-            }
-
-            println("Loading text changed: ${it.data.newText}")
+            loadingText.value = it.data.newText
         }
     }
 

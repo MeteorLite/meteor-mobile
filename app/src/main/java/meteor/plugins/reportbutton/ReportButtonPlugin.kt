@@ -27,6 +27,7 @@ package meteor.plugins.reportbutton
 import eventbus.events.ConfigChanged
 import eventbus.events.GameStateChanged
 import eventbus.events.GameTick
+import meteor.config.ConfigManager
 import meteor.plugins.Plugin
 import meteor.plugins.PluginDescriptor
 import meteor.rs.ClientThread

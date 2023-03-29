@@ -75,5 +75,5 @@ public enum VarClientInt
 
 	WORLD_MAP_SEARCH_FOCUSED(190);
 
-	private final int index;
+	public final int index;
 }

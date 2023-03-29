@@ -6,6 +6,7 @@ import meteor.config.ConfigItem
 class OneTapAgilityConfig : Config("onetapagility") {
 
     val courseSelection = ConfigItem(
+            this,
             group = group,
             keyName = "courseSelection",
             name = "Select course",
@@ -15,6 +16,7 @@ class OneTapAgilityConfig : Config("onetapagility") {
     )
 
     val seersTele = ConfigItem(
+            this,
             group = group,
             keyName = "seersTP",
             name = "Seers Teleport",
@@ -26,6 +28,7 @@ class OneTapAgilityConfig : Config("onetapagility") {
     )
 
     val skillBoost = ConfigItem(
+            this,
             group = group,
             keyName = "skillBoost",
             name = "Boost Agility",
@@ -35,6 +38,7 @@ class OneTapAgilityConfig : Config("onetapagility") {
     )
 
     val boostAmount = ConfigItem(
+            this,
             group = group,
             keyName = "boostAmount",
             name = "Minimum boost",
@@ -47,6 +51,7 @@ class OneTapAgilityConfig : Config("onetapagility") {
     )
 
     val consumeMisclicks = ConfigItem(
+            this,
             group = group,
             keyName = "consumeMisclicks",
             name = "Stop Misclicks",
@@ -55,6 +60,7 @@ class OneTapAgilityConfig : Config("onetapagility") {
     )
 
     val pickUpMarks = ConfigItem(
+            this,
             group = group,
             keyName = "pickUpMarks",
             name = "Pick up Marks of Grace",

@@ -240,8 +240,12 @@ public abstract class FontPeerImpl implements FontPeer{
      * @return the advance width of the specified char of this FontPeerImpl
      */
     public int charWidth(char ch) {
-        Glyph gl = this.getGlyph(ch);
-        return (int)gl.getGlyphPointMetrics().getAdvanceX();
+        try {
+            Glyph gl = this.getGlyph(ch);
+            return (int)gl.getGlyphPointMetrics().getAdvanceX();
+        } catch (Exception e) {
+            return 1;
+        }
     }
 
     /**

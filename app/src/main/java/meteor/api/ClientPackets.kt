@@ -1,7 +1,7 @@
 @file:Suppress("DEPRECATION")
 package meteor.api
 
-//import meteor.plugins.meteor.AutoInteractOverlay
+//import meteor.ui.plugins.meteor.AutoInteractOverlay
 import dev.hoot.api.events.AutomatedMenu
 import dev.hoot.api.packets.WidgetPackets
 import dev.hoot.api.widgets.Widgets

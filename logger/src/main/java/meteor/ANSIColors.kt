@@ -1,13 +1,13 @@
 package meteor
 
 enum class ANSIColors(val id: String) {
-        RESET("\u001B[0m"),
-        BLACK("\u001B[30m"),
-        RED("\u001B[31m"),
-        GREEN("\u001B[32m"),
-        YELLOW("\u001B[33m"),
-        BLUE("\u001B[34m"),
-        PURPLE("\u001B[35m"),
-        CYAN("\u001B[36m"),
-        WHITE("\u001B[37m")
+        RESET("\\x1B[0m"),
+        BLACK("\\x1B[30m"),
+        RED("\\x1B[31m"),
+        GREEN("\\x1B[31m"),
+        YELLOW("\\x1B[31m"),
+        BLUE("\\x1B[34m"),
+        PURPLE("\\x1B[35m"),
+        CYAN("\\x1B[36m"),
+        WHITE("\\x1B[36m")
     }

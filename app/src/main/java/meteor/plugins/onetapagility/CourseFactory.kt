@@ -300,7 +300,7 @@ object CourseFactory {
                     )
                 )
             )
-            else -> null
+            else -> throw RuntimeException("course failure " + course!!::class.java.toString())
         }
     }
 }

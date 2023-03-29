@@ -3,8 +3,11 @@ package meteor.ui.preferences
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import compose.icons.LineAwesomeIcons
+import compose.icons.Octicons
 import compose.icons.lineawesomeicons.PlugSolid
+import compose.icons.octicons.XCircle24
 import meteor.Main
+import meteor.Main.Companion.overlayVisible
 import meteor.plugins.Plugin
 import meteor.ui.composables.toolbar.ToolbarButton
 import meteor.ui.composables.toolbar.addButton
@@ -34,8 +37,14 @@ lateinit var lastPlugin: Plugin
 val pluginListSize = mutableStateOf(Main.meteorConfig.pluginListTextSize.get()!!)
 val pluginSpacer = mutableStateOf(Main.meteorConfig.pluginListSpacer.get()!!)
 val darkLightMode = mutableStateOf(Main.meteorConfig.isLightTheme.get()!!)
-val uiColor = mutableStateOf(Color((Main.meteorConfig.uiColor.get()!!).rgb))
+val uiColor = mutableStateOf(getColor())
 val secondColor = mutableStateOf(Color((Main.meteorConfig.uiAccentColor.get()!!).rgb))
+
+fun getColor(): Color {
+    val rgb = (Main.meteorConfig.uiColor.get()!!).rgb
+    val color = Color(rgb)
+    return color
+}
 val surface: Color
     get() = if (darkLightMode.value) Color(0xFF212121)
     else Color(0xFFf3f5f7)
@@ -93,7 +102,15 @@ fun setOpenValues(openValue: Boolean) {
     pluginsOpen.value = openValue
 }
 
-
+private var closeOverlayButton = addButton(ToolbarButton(
+        "closeOverlay",
+        Octicons.XCircle24,
+        iconColor = mutableStateOf(Color.Red),
+        description = "Close Overlay",
+        onClick = {
+            overlayVisible.value = false
+        },
+        bottom = true))
 
 val pluginListButton = addButton(
     ToolbarButton(

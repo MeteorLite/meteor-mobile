@@ -1002,8 +1002,8 @@ public class Font implements Serializable {
 /*		com.google.typography.font.sfntly.Font font=FontFactory.getInstance().loadFonts(fontStream)[0];
 		GlyphTable glyphTable =font.getTable(com.google.typography.font.sfntly.Tag.glyf);
 		font.tableMap();*/
-		//return new Font();
-		throw new UnsupportedOperationException();
+		return Font.DEFAULT_FONT;
+		//throw new UnsupportedOperationException();
 
 //            font = Toolkit.getDefaultToolkit().getGraphicsFactory().embedFont(fontFile.getAbsolutePath());
     	//throw new UnsupportedOperationException();
