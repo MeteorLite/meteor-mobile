@@ -31,21 +31,22 @@ import net.runelite.api.mixins.Shadow;
 import net.runelite.rs.api.RSClient;
 import net.runelite.rs.api.RSMouseWheelHandler;
 
+import java.awt.event.MouseWheelEvent;
+
 @Mixin(RSMouseWheelHandler.class)
 public abstract class RSMouseWheelHandlerMixin implements RSMouseWheelHandler
 {
 	@Shadow("client")
 	private static RSClient client;
 
-/*	@Override
 	@Copy("mouseWheelMoved")
 	@Replace("mouseWheelMoved")
-	public void mouseWheelMoved(MouseWheelEvent event)
+	public static void mouseWheelMoved(MouseWheelEvent event)
 	{
 		event = client.getCallbacks().mouseWheelMoved(event);
 		if (!event.isConsumed())
 		{
 			mouseWheelMoved(event);
 		}
-	}*/
+	}
 }
