@@ -8,8 +8,9 @@ import meteor.config.legacy.Range
 import meteor.ui.components.ComponentConstants
 import java.awt.Color
 
-open class MeteorConfig() : Config(Configuration.MASTER_GROUP) {
+class MeteorConfig() : Config(Configuration.MASTER_GROUP) {
     val infoBoxVertical = ConfigItem(
+            this,
             group = group,
             keyName = "infoBoxVertical",
             name = "Display infoboxes vertically",
@@ -18,6 +19,7 @@ open class MeteorConfig() : Config(Configuration.MASTER_GROUP) {
     )
 
     val infoBoxSize = ConfigItem(
+            this,
             group = group,
             keyName = "infoBoxSize",
             name = "Infobox size",
@@ -26,6 +28,7 @@ open class MeteorConfig() : Config(Configuration.MASTER_GROUP) {
     )
 
     val infoBoxTextOutline = ConfigItem(
+            this,
             group = group,
             keyName = "infoBoxTextOutline",
             name = "Outline infobox text",
@@ -34,6 +37,7 @@ open class MeteorConfig() : Config(Configuration.MASTER_GROUP) {
     )
 
     val overlayBackgroundColor = ConfigItem(
+            this,
             group = group,
             keyName = "overlayBackgroundColor",
             name = "Overlay Color",
@@ -42,6 +46,7 @@ open class MeteorConfig() : Config(Configuration.MASTER_GROUP) {
     )
 
     val pluginListSpacer = ConfigItem(
+            this,
             group = group,
             keyName = "pluginListSpacer",
             name = "Plugin List Spacer",
@@ -50,6 +55,7 @@ open class MeteorConfig() : Config(Configuration.MASTER_GROUP) {
     )
 
     val isLightTheme = ConfigItem(
+            this,
             group = group,
             keyName = "themeColor",
             name = "Light theme/Dark theme",
@@ -58,6 +64,7 @@ open class MeteorConfig() : Config(Configuration.MASTER_GROUP) {
     )
 
     val uiColor = ConfigItem(
+            this,
             group = group,
             keyName = "meteorColor",
             name = "Meteor Color",
@@ -66,6 +73,7 @@ open class MeteorConfig() : Config(Configuration.MASTER_GROUP) {
     )
 
     val uiAccentColor = ConfigItem(
+            this,
             group = group,
             keyName = "secondaryColor",
             name = "Accent Color",
@@ -74,6 +82,7 @@ open class MeteorConfig() : Config(Configuration.MASTER_GROUP) {
     )
 
     val pluginListTextSize = ConfigItem(
+            this,
             group = group,
             name = "pluginListTextSize",
             keyName = "Plugin list Text Size",
@@ -82,6 +91,7 @@ open class MeteorConfig() : Config(Configuration.MASTER_GROUP) {
     )
 
     val toolbarWidth = ConfigItem(
+            this,
             group = group,
             name = "toolbar width",
             keyName = "toolbar width",

@@ -35,6 +35,11 @@ public class Point
 	public final int x;
 	public final int y;
 
+	public Point(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+
 	/**
 	 * Gets the distance between this point and another.
 	 *
@@ -61,5 +66,13 @@ public class Point
 	public java.awt.Point getAwtPoint()
 	{
 		return new java.awt.Point(getX(), getY());
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
 	}
 }

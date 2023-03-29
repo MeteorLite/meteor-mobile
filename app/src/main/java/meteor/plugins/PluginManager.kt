@@ -5,9 +5,14 @@ import meteor.Main
 import meteor.config.ConfigManager
 import meteor.plugins.agility.AgilityPlugin
 import meteor.plugins.autologin.AutoLoginPlugin
+import meteor.plugins.meteor.MeteorPlugin
+import meteor.plugins.mousetooltips.MouseTooltipPlugin
 import meteor.plugins.neverlog.NeverLogoutPlugin
 import meteor.plugins.onetapagility.OneTapAgilityPlugin
+import meteor.plugins.playeroutline.PlayerOutlinePlugin
+import meteor.plugins.privateserver.PrivateServerPlugin
 import meteor.plugins.reportbutton.ReportButtonPlugin
+import meteor.plugins.statusbars.StatusBarsPlugin
 import java.io.File
 import java.net.URLClassLoader
 import java.util.jar.Manifest
@@ -22,11 +27,16 @@ object PluginManager {
     init {
         //init<Meteor>()
         if (pluginsEnabled) {
+            init<MeteorPlugin>()
             init<AgilityPlugin>()
             init<AutoLoginPlugin>()
+            init<MouseTooltipPlugin>()
             init<NeverLogoutPlugin>()
             init<OneTapAgilityPlugin>()
+            init<PlayerOutlinePlugin>()
+            init<PrivateServerPlugin>()
             init<ReportButtonPlugin>()
+            init<StatusBarsPlugin>()
         }
         Main.logger.warn("Loaded ${plugins.size} plugins")
     }

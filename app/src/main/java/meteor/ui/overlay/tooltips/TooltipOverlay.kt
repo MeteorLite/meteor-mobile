@@ -27,31 +27,37 @@ package meteor.ui.overlay.tooltips
 import meteor.Main
 import meteor.ui.components.LayoutableRenderableEntity
 import meteor.ui.overlay.*
+import net.runelite.api.Client
 import net.runelite.api.widgets.WidgetID
+import net.runelite.rs.api.RSClient
 import java.awt.*
+import java.lang.Exception
 
 class TooltipOverlay : Overlay() {
     val STANDARD_BACKGROUND_COLOR = Color(70, 61, 50, 156)
     val tooltipManager = Main.tooltipManager
+    var mousePos: net.runelite.api.Point? = null
     override fun render(graphics: Graphics2D): Dimension? {
         val tooltips: List<Tooltip> = tooltipManager.tooltips
-        return if (tooltips.isEmpty()) {
-            null
-        } else try {
-            renderTooltips(graphics, tooltips)
-        } finally {
-            // Tooltips must always be cleared each frame
-            tooltipManager.clear()
+        if (tooltips.isEmpty()) {
+            return null
         }
+        try {
+            mousePos = client.mouseCanvasPosition
+            renderTooltips(graphics, tooltips)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        tooltipManager.clear()
+        return null
     }
 
     private fun renderTooltips(graphics: Graphics2D, tooltips: List<Tooltip>): Dimension {
-        val canvasWidth = client.canvasWidth
-        val canvasHeight = client.canvasHeight
-        val mouseCanvasPosition = client.mouseCanvasPosition
-        val prevBounds = bounds
-        val tooltipX = Math.min(canvasWidth - prevBounds!!.width, mouseCanvasPosition.x)
-        val tooltipY = Math.min(canvasHeight - prevBounds.height, mouseCanvasPosition.y + UNDER_OFFSET)
+        client as RSClient
+        val canvasWidth = client.gameImage.width
+        val canvasHeight = client.gameImage.height
+        val tooltipX = Math.min(canvasWidth - bounds!!.width, mousePos!!.x)
+        val tooltipY = Math.min(canvasHeight - bounds!!.height, mousePos!!.y + UNDER_OFFSET)
         val newBounds = Rectangle(tooltipX, tooltipY, 0, 0)
         for (tooltip in tooltips) {
             val entity: LayoutableRenderableEntity
@@ -62,7 +68,7 @@ class TooltipOverlay : Overlay() {
                 }
             } else {
                 val tooltipComponent = TooltipComponent()
-                tooltipComponent.modIcons = (client.modIcons)
+                tooltipComponent.modIcons = ((client as Client).modIcons)
                 tooltipComponent.text = (tooltip.text)
                 tooltipComponent.backgroundColor = (STANDARD_BACKGROUND_COLOR)
                 entity = tooltipComponent

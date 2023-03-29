@@ -35,9 +35,9 @@ public class SfntlyFontPeer extends FontPeerImpl {
 		this.size = size;
 		
 		try {
-			InputStream ttfInput = getClass().getResourceAsStream("OpenSans-Regular.ttf");
+			InputStream ttfInput = getClass().getResourceAsStream(name + ".ttf");
 			if(ttfInput == null) {
-				throw new RuntimeException("Couldn't open the font file");
+				throw new RuntimeException("Couldn't open the font file: " + name + ".ttf");
 			}
 			font = FontFactory.getInstance().loadFonts(ttfInput)[0];
 		} catch (IOException e) {
@@ -97,10 +97,27 @@ public class SfntlyFontPeer extends FontPeerImpl {
 
 		
 	    HorizontalMetricsTable hmtx = font.getTable(Tag.hmtx);
-	    
-	    double width = toPixels(glyph.xMax() - glyph.xMin());
-	    double height = toPixels(glyph.yMax() - glyph.yMin());
-	    double advance = toPixels(hmtx.advanceWidth(glyphIndex));
+	    double w = 1f;
+		try {
+			w = toPixels(glyph.xMax() - glyph.xMin());
+		} catch (Exception e) {
+
+		}
+		double h = 1f;
+		try {
+			h = toPixels(glyph.yMax() - glyph.yMin());
+		} catch (Exception e) {
+
+		}
+		double a = 1f;
+		try {
+			a = toPixels(hmtx.advanceWidth(glyphIndex));
+		} catch (Exception e) {
+
+		}
+	    double width = w;
+	    double height = h;
+	    double advance = a;
 	    
 	    SfntlyGlyph sfntlyGlyph = new SfntlyGlyph(advance, width, height, glyph);
 	    sfntlyGlyph.setScale(size / unitsPerEm);

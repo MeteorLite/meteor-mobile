@@ -62,7 +62,7 @@ class TooltipComponent : LayoutableRenderableEntity {
         // Tooltip size
         val metrics = graphics.fontMetrics
         val textDescent = metrics.descent
-        val textHeight = metrics.height
+        val textHeight = metrics.height + 15
         var tooltipWidth = 0
         var tooltipHeight = 0
         val lines = BR.split(text)
@@ -73,7 +73,7 @@ class TooltipComponent : LayoutableRenderableEntity {
             if (textWidth > tooltipWidth) {
                 tooltipWidth = textWidth
             }
-            tooltipHeight += textHeight
+            tooltipHeight += textHeight - 15
         }
 
         // Tooltip position

@@ -35,7 +35,8 @@ class OneTapAgilityPlugin : Plugin() {
 
     fun resetCourse() {
         course = CourseFactory.build(config.courseSelection.get())
-        gameEventManager.simulateGameEvents(this)
+        if (course != null)
+            gameEventManager.simulateGameEvents(this)
     }
 
     override fun onMenuOptionClicked(it: MenuOptionClicked) {

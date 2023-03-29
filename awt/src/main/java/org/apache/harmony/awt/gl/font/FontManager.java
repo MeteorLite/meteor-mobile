@@ -439,7 +439,7 @@ public class FontManager {
      * @param size size of the font
      */
     public FontPeer createDefaultFont(int style, int size) {
-    	return new SfntlyFontPeer("sans serif", style, size);
+    	return new SfntlyFontPeer("/meteor/game/runescape", style, size);
     }
     
     /**
