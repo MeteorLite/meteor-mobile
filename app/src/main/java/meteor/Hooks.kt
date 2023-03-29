@@ -20,6 +20,9 @@ import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.Image
+import java.awt.event.KeyEvent
+import java.awt.event.MouseEvent
+import java.awt.event.MouseWheelEvent
 import java.awt.image.BufferedImage
 
 
@@ -208,6 +211,50 @@ class Hooks : Callbacks {
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
+    }
+
+    override fun mousePressed(mouseEvent: MouseEvent): MouseEvent {
+        return mouseEvent
+    }
+
+    override fun mouseReleased(mouseEvent: MouseEvent): MouseEvent {
+        return mouseEvent
+    }
+
+    override fun mouseClicked(mouseEvent: MouseEvent): MouseEvent {
+        return mouseEvent
+    }
+
+    override fun mouseEntered(mouseEvent: MouseEvent): MouseEvent {
+        return mouseEvent
+    }
+
+    override fun mouseExited(mouseEvent: MouseEvent): MouseEvent {
+        return mouseEvent
+    }
+
+    override fun mouseDragged(mouseEvent: MouseEvent): MouseEvent {
+        return mouseEvent
+    }
+
+    override fun mouseMoved(mouseEvent: MouseEvent): MouseEvent {
+        return mouseEvent
+    }
+
+    override fun mouseWheelMoved(event: MouseWheelEvent): MouseWheelEvent {
+        return event
+    }
+
+    override fun keyPressed(keyEvent: KeyEvent) {
+
+    }
+
+    override fun keyReleased(keyEvent: KeyEvent?) {
+        
+    }
+
+    override fun keyTyped(keyEvent: KeyEvent?) {
+        
     }
 
     companion object {

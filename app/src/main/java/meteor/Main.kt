@@ -12,6 +12,7 @@ import android.os.StrictMode.ThreadPolicy
 import android.text.InputType
 import android.view.KeyEvent
 import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.View.OnHoverListener
 import android.view.View.OnTouchListener
@@ -74,6 +75,7 @@ import net.runelite.api.GameState
 import okhttp3.OkHttpClient
 import osrs.*
 import java.awt.Point
+import java.awt.event.MouseWheelEvent
 import java.awt.image.BufferedImage
 import java.io.*
 import java.math.BigInteger
@@ -96,6 +98,7 @@ class Main : AppCompatActivity() {
         val httpClient = OkHttpClient()
         var INSTANCE : Main? = null
         val overlayVisible = mutableStateOf(false)
+        var zooming = false
     }
 
     init {
@@ -422,6 +425,38 @@ class Main : AppCompatActivity() {
 
     var downTime: Long? = null
 
+
+    class CustomOnScaleGestureListener :
+            ScaleGestureDetector.SimpleOnScaleGestureListener() {
+        var toSkip = 0
+        override fun onScale(detector: ScaleGestureDetector): Boolean {
+            val scaleFactor = detector.scaleFactor
+            if (toSkip <= 0) {
+                if (scaleFactor > 1) {
+                    // Zooming Out
+                    MouseWheelHandler.mouseWheelMoved(MouseWheelEvent(-1))
+                } else {
+                    // Zooming In
+                    MouseWheelHandler.mouseWheelMoved(MouseWheelEvent(1))
+                }
+                toSkip = 2
+            } else {
+                toSkip--
+            }
+            zooming = true
+            println(scaleFactor)
+            return true
+        }
+
+        override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
+            return true
+        }
+
+        override fun onScaleEnd(detector: ScaleGestureDetector) { }
+    }
+
+    var scaleGestureDetector: ScaleGestureDetector? = null
+
     @SuppressLint("ClickableViewAccessibility")
     fun touchListener() : OnTouchListener {
         return OnTouchListener{ _: View, event: MotionEvent ->
@@ -430,6 +465,13 @@ class Main : AppCompatActivity() {
             val point = Point(touchX, touchY)
             if (overlayVisible.value)
                 return@OnTouchListener true
+            if (scaleGestureDetector == null)
+                scaleGestureDetector = ScaleGestureDetector(this, CustomOnScaleGestureListener())
+            scaleGestureDetector!!.onTouchEvent(event)
+            if (zooming) {
+                zooming = false
+                return@OnTouchListener true
+            }
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     downStartPosition = point

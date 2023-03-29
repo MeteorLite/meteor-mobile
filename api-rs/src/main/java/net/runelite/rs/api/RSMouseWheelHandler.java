@@ -1,5 +1,14 @@
 package net.runelite.rs.api;
 
 
+import net.runelite.mapping.Import;
 
-public interface RSMouseWheelHandler {}
+import java.awt.event.MouseWheelEvent;
+
+public interface RSMouseWheelHandler {
+
+    @Import("mouseWheelMoved")
+    static void mouseWheelMoved$api(MouseWheelEvent event) {
+
+    }
+}

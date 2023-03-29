@@ -1,6 +1,7 @@
 package osrs;
 
 import java.awt.Component;
+import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 /*import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;*/
@@ -14,7 +15,7 @@ import net.runelite.mapping.ObfuscatedSignature;
 public final class MouseWheelHandler implements class171/*, MouseWheelListener*/ {
    @ObfuscatedName("aj")
    @Export("rotation")
-   int rotation = 0;
+   static int rotation = 0;
 
    @ObfuscatedName("aj")
    @ObfuscatedSignature(
@@ -47,9 +48,9 @@ public final class MouseWheelHandler implements class171/*, MouseWheelListener*/
       return var1;
    }
 
-/*   @Export("mouseWheelMoved")
+   @Export("mouseWheelMoved")
    @ObfuscatedName("mouseWheelMoved")
-   public synchronized void mouseWheelMoved(MouseWheelEvent var1) {
-      this.rotation += var1.getWheelRotation();
-   }*/
+   public static void mouseWheelMoved(MouseWheelEvent var1) {
+      MouseWheelHandler.rotation += var1.getWheelRotation();
+   }
 }
