@@ -46,5 +46,5 @@ public enum VarClientStr
 	NOTIFICATION_TOP_TEXT(387),
 	NOTIFICATION_BOTTOM_TEXT(388);
 
-	private final int index;
+	public final int index;
 }
