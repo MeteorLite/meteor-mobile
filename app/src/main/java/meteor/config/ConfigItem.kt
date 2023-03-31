@@ -35,6 +35,7 @@ class ConfigItem<T>(val config: Config,
                            val composePanel: Boolean = false,
                            val min: Int = -1,
                            val max: Int = -1,
+                           val alpha: Boolean = false,
                            val secret: Boolean = false) {
 
     init {

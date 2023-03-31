@@ -5,6 +5,8 @@ import net.runelite.api.packets.PacketBufferNode;
 import net.runelite.api.widgets.Widget;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 public class WidgetPackets
 {
@@ -261,5 +263,37 @@ public class WidgetPackets
 	public static PacketBufferNode createContinuePacket(int widgetId, int childId)
 	{
 		return ClientPackets.INSTANCE.createContinuePacket(widgetId, childId);
+	}
+
+	public static void widgetAction(Widget widget, String action)
+	{
+		var actions = widget.getRawActions();
+		if (actions == null)
+		{
+			return;
+		}
+
+		var index = List.of(actions).indexOf(action);
+		if (index == 0) {
+			widgetFirstOption(widget);
+		} else if (index == 1) {
+			widgetSecondOption(widget);
+		} else if (index == 2) {
+			widgetThirdOption(widget);
+		} else if (index == 3) {
+			widgetFourthOption(widget);
+		} else if (index == 4) {
+			widgetFifthOption(widget);
+		} else if (index == 5) {
+			widgetSixthOption(widget);
+		} else if (index == 6) {
+			widgetSeventhOption(widget);
+		} else if (index == 7) {
+			widgetEighthOption(widget);
+		} else if (index == 8) {
+			widgetNinthOption(widget);
+		} else if (index == 9) {
+			widgetTenthOption(widget);
+		}
 	}
 }

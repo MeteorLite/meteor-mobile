@@ -135,7 +135,7 @@ class Main : AppCompatActivity() {
         // load configs immediately
         ConfigManager.loadSavedProperties()
         ConfigManager.setDefaultConfiguration(MeteorConfig::class.java, false)
-        ConfigManager.setDefaultConfiguration(PrivateServerConfig::class.java, false)
+        ConfigManager.setDefaultConfiguration(PrivateServerConfig::class.java, true)
         ConfigManager.saveProperties()
 
         // init meteor config

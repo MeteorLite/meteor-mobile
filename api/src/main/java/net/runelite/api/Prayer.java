@@ -155,16 +155,16 @@ public enum Prayer
 	/**
 	 * Gets the varbit that stores whether the prayer is active or not.
 	 */
-	private final int varbit;
+	public final int varbit;
 
 	/**
 	 * Gets the prayer drain rate (measured in pray points/minute)
 	 */
-	private final double drainRate;
+	public final double drainRate;
 
 	/**
 	 * Gets the widget info for prayer
 	 */
-	private final WidgetInfo widgetInfo;
+	public final WidgetInfo widgetInfo;
 
 }

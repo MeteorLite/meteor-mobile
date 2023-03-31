@@ -5,11 +5,13 @@ import meteor.Main
 import meteor.config.ConfigManager
 import meteor.plugins.agility.AgilityPlugin
 import meteor.plugins.autologin.AutoLoginPlugin
+import meteor.plugins.interacthighlight.InteractHighlightPlugin
 import meteor.plugins.meteor.MeteorPlugin
 import meteor.plugins.mousetooltips.MouseTooltipPlugin
 import meteor.plugins.neverlog.NeverLogoutPlugin
 import meteor.plugins.onetapagility.OneTapAgilityPlugin
 import meteor.plugins.playeroutline.PlayerOutlinePlugin
+import meteor.plugins.prayerflicker.PrayerFlickerPlugin
 import meteor.plugins.privateserver.PrivateServerPlugin
 import meteor.plugins.reportbutton.ReportButtonPlugin
 import meteor.plugins.statusbars.StatusBarsPlugin
@@ -30,10 +32,12 @@ object PluginManager {
             init<MeteorPlugin>()
             init<AgilityPlugin>()
             init<AutoLoginPlugin>()
+            init<InteractHighlightPlugin>()
             init<MouseTooltipPlugin>()
             init<NeverLogoutPlugin>()
             init<OneTapAgilityPlugin>()
             init<PlayerOutlinePlugin>()
+            init<PrayerFlickerPlugin>()
             init<PrivateServerPlugin>()
             init<ReportButtonPlugin>()
             init<StatusBarsPlugin>()
