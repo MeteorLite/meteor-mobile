@@ -46,5 +46,5 @@ public enum InterfaceTab
 	EMOTES(12),
 	MUSIC(13);
 
-	private final int id;
+	public final int id;
 }

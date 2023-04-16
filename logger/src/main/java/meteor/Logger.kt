@@ -33,10 +33,9 @@ class Logger(var name: String = "") {
             name
         }
         val header = Message.newMessage()
-                .add(DEFAULT_CONTROLLER_COLOR, "[$tempName] ")
+                .add("", "[$tempName] ")
                 .build()
-        System.out.format(format, header, ansiColor + message)
-        print(ANSIColors.RESET.id)
+        System.out.format(format, header, message)
     }
 
     private fun printColorMessageReplacers(ansiColor: String, message: Any, vararg replacers: Any) {

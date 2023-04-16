@@ -281,7 +281,9 @@ public class SinglePixelPackedSampleModel extends SampleModel {
         for (int i = y; i < y + h; i++) {
             for (int j = x; j < x + w; j++) {
                 for (int n = 0; n < this.numBands; n++) {
-                    setSample(j, i, n, iArray[idx++], data);
+                    try {
+                        setSample(j, i, n, iArray[idx++], data);
+                    } catch (Exception e) {}
                 }
             }
         }

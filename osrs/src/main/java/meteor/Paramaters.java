@@ -15,7 +15,7 @@ public class Paramaters {
     static String s25 = "212";
 
     //Visually sets world number on login screen but is functionally useless, set in codebase below
-    static String s12 = "441";
+    static String s12 = "302";
     static String s10 = "5";
     static String s15 = "0";
     static String s4 = "1";
@@ -97,6 +97,6 @@ public class Paramaters {
     }
 
     public static String getCodeBase() {
-        return "oldschool141.runescape.com";
+        return "oldschool2.runescape.com";
     }
 }

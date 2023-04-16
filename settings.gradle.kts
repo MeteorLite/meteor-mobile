@@ -1,6 +1,8 @@
 rootProject.name="Meteor"
 
-include(":app")
+include(":app-android")
+include(":app-common")
+include(":app-desktop")
 include(":awt")
 include(":osrs")
 include(":annotations")
