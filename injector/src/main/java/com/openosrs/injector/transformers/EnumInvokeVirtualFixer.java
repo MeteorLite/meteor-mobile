@@ -14,9 +14,12 @@ import net.runelite.asm.Method;
 import net.runelite.asm.attributes.code.Instruction;
 import net.runelite.asm.attributes.code.instructions.InvokeVirtual;
 
+import meteor.Logger;
+
 public class EnumInvokeVirtualFixer extends InjectTransformer
 {
 	private int fixedEnums = 0;
+	private Logger log = new Logger("Injector");
 	public EnumInvokeVirtualFixer(InjectData inject)
 	{
 		super(inject);
@@ -26,6 +29,7 @@ public class EnumInvokeVirtualFixer extends InjectTransformer
 	void transformImpl()
 	{
 		inject.forEachPair(this::fixEnumInvokeVirtuals);
+		log.setName("Injector");
 		log.debug("Fixed " + fixedEnums + " enums.");
 	}
 

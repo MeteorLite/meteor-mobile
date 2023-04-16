@@ -14,4 +14,4 @@
 .cxx
 /osrs/src/main/java/meteor/Secrets.kt
 /osrs/src/main/java/meteor/Secrets.java
-/app/libs/injected-client.jar
+/app-android/libs/injected-client.jar

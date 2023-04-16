@@ -101,7 +101,7 @@ public class Injector extends InjectData implements InjectTaskHandler
 			throw new RuntimeException("Invalid mixins input.");
 		}
 
-		File injected = new File("./app/libs/injected-client.jar");
+		File injected = new File("./app-android/libs/injected-client.jar");
 		if (injected.exists())
 		{
 			injected.delete();
